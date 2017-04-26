@@ -65,7 +65,7 @@ function createChatVisitorSession(liveagent, line) {
       organizationId: liveagent.orgId,
       deploymentId: liveagent.deploymentId,
       buttonId: liveagent.buttonId,
-      sessionId: liveagent.session.id,
+      sessionId: session.id,
       trackingId: "",
       userAgent: USER_AGENT,
       language: "ja",
@@ -139,17 +139,17 @@ function createChatVisitorSession(liveagent, line) {
 
 function monitorChatActivity(line, liveagent) {
   var session = util.getSession();
-  session.ack = session.ack === undefined ? -1 : liveagent.session.ack;
+  session.ack = session.ack === undefined ? -1 : session.ack;
   var request = require("request");
   var options = {
     url: "https://" + liveagent.laPod + "/chat/rest/System/Messages",
     qs: {
-      ack: liveagent.session.ack
+      ack: session.ack
     },
     headers: {
       "X-LIVEAGENT-API-VERSION": API_VERSION,
-      "X-LIVEAGENT-SESSION-KEY": liveagent.session.key,
-      "X-LIVEAGENT-AFFINITY": liveagent.session.affinity
+      "X-LIVEAGENT-SESSION-KEY": session.key,
+      "X-LIVEAGENT-AFFINITY": session.affinity
     },
     json: true
   };
