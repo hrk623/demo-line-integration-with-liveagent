@@ -129,9 +129,9 @@ function createChatVisitorSession() {
 }
 
 function monitorChatActivity() {
+  console.log('ロングポーリング');
   var liveagent = util.getLiveagentConnection();
   var session = util.getSession();
-
   session.ack = session.ack === undefined ? -1 : session.ack;
   var request = require("request");
   var options = {
@@ -147,6 +147,12 @@ function monitorChatActivity() {
     json: true
   };
   request.get(options, function(error, response, body) {
+    console.log('error');
+    console.log(error);
+    console.log('response');
+    console.log(response);
+    console.log('body');
+    console.log(body);
     if (error || response.statusCode != 200) {
       handleError(error, body);
     } else if (!error && response.statusCode == 204) {
