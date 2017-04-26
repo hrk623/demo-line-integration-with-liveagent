@@ -32,6 +32,9 @@ var responder = {
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
+	console.log(liveagent);
+	console.log(line);
+	console.log(responder);
   lineController.processRequest(req);
   res.send('SUCCESS');
 });
