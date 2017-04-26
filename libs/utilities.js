@@ -5,36 +5,17 @@ exports.getResponder = function() {
 
 exports.setResponder = function(responder) {
 var fs = require('fs');
-fs.writeFile('./public/responder.json', JSON.stringify(responder), 'utf8', function (err,data) {});
+fs.writeFileSync('./public/responder.json', JSON.stringify(responder), 'utf8');
 }
 
-
-
-exports.getLineChannel = function(sign) {
-  return {
-    channelId: '1500077691',
-    secret: 'b565899f7bd211d563bbe13023568167',
-    token: 'qbx5S19CQJzmLuhhSEedBP1yv7ilbDWV8ZTqMwu3eBBK0pXmAxcSb0SLq2A0IQvCThsRPVvGtwAE0suPmzm+TJm41tKjkqFYH8+4H9CF/0vEI795Tut1H/G6aEU8vuMS1MPdCNCYYs87suAf/79yzgdB04t89/1O/w1cDnyilFU=',
-  };
+exports.getSession = function() {
+   delete require.cache[require.resolve('../public/responder.json')];
+   return require('../public/session.json');
 }
 
-exports.getLineConnection = function(id) {
-   return {
-      id : 'some_uniqu_id',
-      channelId: '1500077691',
-      secret: 'b565899f7bd211d563bbe13023568167',
-      token: 'qbx5S19CQJzmLuhhSEedBP1yv7ilbDWV8ZTqMwu3eBBK0pXmAxcSb0SLq2A0IQvCThsRPVvGtwAE0suPmzm+TJm41tKjkqFYH8+4H9CF/0vEI795Tut1H/G6aEU8vuMS1MPdCNCYYs87suAf/79yzgdB04t89/1O/w1cDnyilFU=',
-   };
-}
-
-exports.getliveagentConnection = function(id) {
-   return {
-    id : 'some_uniqu_id',
-    laPod: 'd.la10.salesforceliveagent.com',
-    orgId: '00D6F000001dAw8',
-    deploymentId: '5726F000000PRZ1',
-    buttonId: '5736F000000PRfz'
-  };
+exports.setSession = function(session) {
+var fs = require('fs');
+fs.writeFileSync('./public/session.json', JSON.stringify(responder), 'utf8');
 }
 
 exports.replyMessage = function(line, messageList) {

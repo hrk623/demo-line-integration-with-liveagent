@@ -1,63 +1,64 @@
-var util = require('./utilities');
+var util = require("./utilities");
 
-var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
+var USER_AGENT =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 var API_VERSION = process.env.LIVEAGENT_API_VERSION || 39;
 
 var liveagent = {
-    laPod: process.env.LIVEAGENT_POD,
-    orgId: process.env.LIVEAGENT_ORGANIZATION_ID,
-    deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
-    buttonId: process.env.LIVEAGENT_BUTTON_ID,
+  laPod: process.env.LIVEAGENT_POD,
+  orgId: process.env.LIVEAGENT_ORGANIZATION_ID,
+  deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
+  buttonId: process.env.LIVEAGENT_BUTTON_ID
 };
 
-exports.startSessionWithLine = function (line) {
+exports.startSessionWithLine = function(line) {
   var liveagent = {
     laPod: process.env.LIVEAGENT_POD,
     orgId: process.env.LIVEAGENT_ORGANIZATION_ID,
     deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
-    buttonId: process.env.LIVEAGENT_BUTTON_ID,
+    buttonId: process.env.LIVEAGENT_BUTTON_ID
+  };
+  createLiveAgentSession(liveagent, function() {
+    createChatVisitorSession(liveagent, line);
+  });
 };
-  createLiveAgentSession(liveagent, function(session) {
-     liveagent.session = session;
-     createChatVisitorSession(liveagent, line);
-  })
-}
 
-
-function createLiveAgentSession (liveagent, callback) {
-  var request = require('request');
+function createLiveAgentSession(liveagent, callback) {
+  var request = require("request");
   var options = {
-    url: 'https://' + liveagent.laPod + '/chat/rest/System/SessionId',
+    url: "https://" + liveagent.laPod + "/chat/rest/System/SessionId",
     headers: {
-      'X-LIVEAGENT-API-VERSION': API_VERSION,
-      'X-LIVEAGENT-AFFINITY': 'null',
-      'Connection': 'keep-alive'
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-AFFINITY": "null",
+      Connection: "keep-alive"
     },
     json: true
   };
   request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-        handleError(error, body)
-        return;
+      handleError(error, body);
+      return;
     }
-    callback({
+    util.setSession({
       key: body.key,
       affinity: body.affinityToken,
       id: body.id,
       sequence: 1
     });
+    callback();
   });
 }
 
 function createChatVisitorSession(liveagent, line) {
-  var request = require('request');
+  var session = util.getSession();
+  var request = require("request");
   var options = {
-    url: 'https://' + liveagent.laPod + '/chat/rest/Chasitor/ChasitorInit',
+    url: "https://" + liveagent.laPod + "/chat/rest/Chasitor/ChasitorInit",
     headers: {
-      'X-LIVEAGENT-API-VERSION': API_VERSION,
-      'X-LIVEAGENT-SESSION-KEY': liveagent.session.key,
-      'X-LIVEAGENT-SEQUENCE': liveagent.session.sequence,
-      'X-LIVEAGENT-AFFINITY': liveagent.session.affinity
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-SESSION-KEY": session.key,
+      "X-LIVEAGENT-SEQUENCE": session.sequence,
+      "X-LIVEAGENT-AFFINITY": session.affinity
     },
     json: true,
     body: {
@@ -65,94 +66,103 @@ function createChatVisitorSession(liveagent, line) {
       deploymentId: liveagent.deploymentId,
       buttonId: liveagent.buttonId,
       sessionId: liveagent.session.id,
-      trackingId: '',
+      trackingId: "",
       userAgent: USER_AGENT,
-      language: 'ja',
-      screenResolution: '3200x1800',
+      language: "ja",
+      screenResolution: "3200x1800",
       visitorName: line.user.displayName,
-      prechatDetails: [{
-        label: 'ContactLineId',
-        value: line.user.id,
-        entityMaps: [],
-        transcriptFields: [],
-        displayToAgent: true,
-        doKnowledgeSearch: false
-      }, {
-        label: 'ContactLastName',
-        value: line.user.name,
-        entityMaps: [],
-        transcriptFields: [],
-        displayToAgent: true,
-        doKnowledgeSearch: false
-      }],
+      prechatDetails: [
+        {
+          label: "ContactLineId",
+          value: line.user.id,
+          entityMaps: [],
+          transcriptFields: [],
+          displayToAgent: true,
+          doKnowledgeSearch: false
+        },
+        {
+          label: "ContactLastName",
+          value: line.user.name,
+          entityMaps: [],
+          transcriptFields: [],
+          displayToAgent: true,
+          doKnowledgeSearch: false
+        }
+      ],
       buttonOverrides: [],
       receiveQueueUpdates: true,
-      prechatEntities: [{
-        entityName: 'Contact',
-        showOnCreate: true,
-        linkToEntityName: null,
-        linkToEntityField: null,
-        saveToTranscript: 'ContactId',
-        entityFieldsMaps: [{
-          fieldName: 'LastName',
-          label: 'ContactLastName',
-          doFind: false,
-          isExactMatch: false,
-          doCreate: true
-        }, {
-          fieldName: 'LineId__c',
-          label: 'ContactLineId',
-          doFind: true,
-          isExactMatch: true,
-          doCreate: true
-        }]
-      }],
+      prechatEntities: [
+        {
+          entityName: "Contact",
+          showOnCreate: true,
+          linkToEntityName: null,
+          linkToEntityField: null,
+          saveToTranscript: "ContactId",
+          entityFieldsMaps: [
+            {
+              fieldName: "LastName",
+              label: "ContactLastName",
+              doFind: false,
+              isExactMatch: false,
+              doCreate: true
+            },
+            {
+              fieldName: "LineId__c",
+              label: "ContactLineId",
+              doFind: true,
+              isExactMatch: true,
+              doCreate: true
+            }
+          ]
+        }
+      ],
       isPost: true
     }
   };
 
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      handleError(error, body)
+      handleError(error, body);
       return;
     }
-    liveagent.session.sequence++;
+    session.sequence++;
+    util.setSession(session);
+
     monitorChatActivity(line, liveagent);
-util.setResponder({
-  name: "LIVEAGENT", // LIVEAGENT
-  status: "CONNECTED", // WAITING, DISCONNECTED
-  options: {}
-});
-
-
+    util.setResponder({
+      name: "LIVEAGENT", // LIVEAGENT
+      status: "CONNECTED", // WAITING, DISCONNECTED
+      options: {}
+    });
   });
 }
 
 function monitorChatActivity(line, liveagent) {
-
-  liveagent.session.ack = liveagent.session.ack === undefined ? -1 : liveagent.session.ack;
-  var request = require('request');
+  var session = util.getSession();
+  session.ack = session.ack === undefined ? -1 : liveagent.session.ack;
+  var request = require("request");
   var options = {
-    url: 'https://' + liveagent.laPod + '/chat/rest/System/Messages',
+    url: "https://" + liveagent.laPod + "/chat/rest/System/Messages",
     qs: {
       ack: liveagent.session.ack
     },
     headers: {
-      'X-LIVEAGENT-API-VERSION': API_VERSION,
-      'X-LIVEAGENT-SESSION-KEY': liveagent.session.key,
-      'X-LIVEAGENT-AFFINITY': liveagent.session.affinity,
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-SESSION-KEY": liveagent.session.key,
+      "X-LIVEAGENT-AFFINITY": liveagent.session.affinity
     },
     json: true
   };
   request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      handleError(error, body)
+      handleError(error, body);
     } else if (!error && response.statusCode == 204) {
-       monitorChatActivity(line, liveagent);
+      monitorChatActivity(line, liveagent);
     } else {
-      liveagent.session.ack = body.sequence;
-       monitorChatActivity(line, liveagent);
-       body.messages.forEach(function(message) {
+      session.ack = body.sequence;
+      util.setSession(session);
+      monitorChatActivity(line, liveagent);
+      body.messages.forEach(function(message) {
         onMessageRecieved(line, liveagent, message);
       });
     }
@@ -161,61 +171,63 @@ function monitorChatActivity(line, liveagent) {
 
 function onMessageRecieved(line, liveagent, message) {
   switch (message.type) {
-    case 'ChatMessage':
+    case "ChatMessage":
       onChatMessage(line, message);
       break;
-    case 'AgentTyping':
+    case "AgentTyping":
       onAgentTyping();
       break;
-    case 'AgentNotTyping':
+    case "AgentNotTyping":
       onAgentNotTyping();
       break;
-    case 'AgentDisconnect':
+    case "AgentDisconnect":
       onAgentDisconnect();
       break;
-    case 'ChasitorSessionData':
+    case "ChasitorSessionData":
       onChasitorSessionData();
       break;
-    case 'ChatEnded':
+    case "ChatEnded":
       onChatEnded();
       break;
-    case 'ChatEstablished':
+    case "ChatEstablished":
       onChatEstablished();
       break;
-    case 'ChatRequestFail':
+    case "ChatRequestFail":
       onChatRequestFail();
       break;
-    case 'ChatRequestSuccess':
+    case "ChatRequestSuccess":
       onChatRequestSuccess();
       break;
-    case 'ChatTransferred':
+    case "ChatTransferred":
       onChatTransferred();
       break;
-    case 'CustomEvent':
+    case "CustomEvent":
       onCustomEvent();
       break;
-    case 'NewVisitorBreadcrumb':
+    case "NewVisitorBreadcrumb":
       onNewVisitorBreadcrumb();
       break;
-    case 'QueueUpdate':
+    case "QueueUpdate":
       onQueueUpdate();
       break;
-    case 'FileTransfer':
+    case "FileTransfer":
       onFileTransfer();
-      break
-    case 'Availability':
+      break;
+    case "Availability":
       onAvailability();
-      break
+      break;
     default:
       break;
   }
 }
 
 function onChatMessage(line, message) {
-  util.pushMessage(line, [{
-    type: 'text',
-    text: message.message.text
-  }]);
+  util.pushMessage(line, [
+    {
+      type: "text",
+      text: message.message.text
+    }
+  ]);
 }
 
 function onAgentTyping() {}
@@ -233,98 +245,99 @@ function onQueueUpdate() {}
 function onFileTransfer() {}
 function onAvailability() {}
 
-
 exports.onEventRecieved = function(line, event) {
   switch (event.type) {
-    case 'message':
+    case "message":
       switch (event.message.type) {
-        case 'text':
+        case "text":
           sendMessage(liveagent, event.message.text);
           break;
-        case 'image':
+        case "image":
           util.getContent(line, event.message, function(content) {
             uploadFile(liveagent, content);
           });
 
           break;
-        case 'video':
+        case "video":
           util.getContent(line, event.message, function(content) {
             uploadFile(liveagent, content);
           });
           break;
-        case 'audio':
+        case "audio":
           util.getContent(line, event.message, function(content) {
             uploadFile(liveagent, content);
           });
           break;
-        case 'location':
-
+        case "location":
           break;
-        case 'sticker':
-
+        case "sticker":
           break;
         default:
           break;
       }
       break;
-    case 'follow':
+    case "follow":
       break;
-    case 'unfollow':
+    case "unfollow":
       break;
-    case 'join':
+    case "join":
       break;
-    case 'leave':
+    case "leave":
       break;
-    case 'postback':
+    case "postback":
       break;
-    case 'beacon':
+    case "beacon":
       break;
     default:
       break;
   }
-}
+};
 
 function sendMessage(liveagent, text) {
-    var request = require('request');
-    var options = {
-      url: 'https://' + liveagent.laPod + '/chat/rest/Chasitor/ChatMessage',
-      headers: {
-        'X-LIVEAGENT-API-VERSION': API_VERSION,
-        'X-LIVEAGENT-SESSION-KEY': liveagent.session.key,
-        'X-LIVEAGENT-SEQUENCE': liveagent.session.sequence,
-        'X-LIVEAGENT-AFFINITY': liveagent.session.affinity
-      },
-      json: true,
-      body: {
-        text: text
-      }
-    };
-    request.post(options, function(error, response, body) {
-      if (error || response.statusCode != 200) {
-        handleError(error, body)
-        return;
-      }
-    });
+  var session = util.getSession();
+  var request = require("request");
+  var options = {
+    url: "https://" + liveagent.laPod + "/chat/rest/Chasitor/ChatMessage",
+    headers: {
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-SESSION-KEY": session.key,
+      "X-LIVEAGENT-SEQUENCE": session.sequence,
+      "X-LIVEAGENT-AFFINITY": session.affinity
+    },
+    json: true,
+    body: {
+      text: text
+    }
+  };
+  request.post(options, function(error, response, body) {
+    if (error || response.statusCode != 200) {
+      handleError(error, body);
+      return;
+    }
+  });
 }
 
-function uploadFile (options, content) {
-  var request = require('request');
-  var query = '?orgId=' + liveagent.laPod;
-  query += '&chatKey=' + liveagent.session.key.slice(liveagent.session.key.indexOf('!'));
-  query += '&fileToken=' + liveagent.file.fileToken;
-  query += '&encoding=UTF-8';
+function uploadFile(options, content) {
+  var session = util.getSession();
+  var request = require("request");
+  var query = "?orgId=" + liveagent.laPod;
+  query +=
+    "&chatKey=" +
+    session.key.slice(session.key.indexOf("!"));
+  query += "&fileToken=" + liveagent.file.fileToken;
+  query += "&encoding=UTF-8";
   var options = {
     url: liveagent.file.uploadServletUrl + query,
     headers: {
-      'Referer': liveagent.file.cdmServletUrl,
-      'User-Agent': USER_AGENT
+      Referer: liveagent.file.cdmServletUrl,
+      "User-Agent": USER_AGENT
     },
     formData: {
-      filename: 'test.jpg',
+      filename: "test.jpg",
       file: {
         value: content.data,
         options: {
-          filename: 'test.jpg',
+          filename: "test.jpg",
           contentType: content.type
         }
       }
@@ -332,7 +345,7 @@ function uploadFile (options, content) {
   };
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      handleError(error, body)
+      handleError(error, body);
       return;
     }
   });
@@ -343,7 +356,7 @@ function handleError(error, body) {
   if (body && body.details && body.details.length > 0) {
     console.error(body.message);
     body.details.forEach(function(detail) {
-      console.error(detail.property + ': ' + detail.message);
+      console.error(detail.property + ": " + detail.message);
     });
   }
 }
