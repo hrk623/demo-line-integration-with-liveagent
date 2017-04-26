@@ -3,7 +3,7 @@ var util = require('./utilities');
 var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
 var API_VERSION = process.env.LIVEAGENT_API_VERSION || 39;
 
-exports.liveagent = {
+var liveagent = {
     laPod: process.env.LIVEAGENT_POD,
     orgId: process.env.LIVEAGENT_ORGANIZATION_ID,
     deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
@@ -123,6 +123,13 @@ function createChatVisitorSession(liveagent, line) {
     }
     liveagent.session.sequence++;
     monitorChatActivity(line, liveagent);
+util.setResponder({
+  name: "LIVEAGENT", // LIVEAGENT
+  status: "CONNECTED", // WAITING, DISCONNECTED
+  options: {}
+});
+
+
   });
 }
 

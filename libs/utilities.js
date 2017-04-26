@@ -1,3 +1,13 @@
+exports.getResponder = function() {
+return require("./Responder.json");
+}
+
+exports.setResponder = function(responder) {
+var fs = require("fs");
+fs.writeFile( "Responder.json", JSON.stringify( responder ), "utf8");
+}
+
+
 
 exports.getLineChannel = function(sign) {
   return {

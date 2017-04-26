@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var lineController = require('./controller/line-controller');
+var util = require("../libs/utilities");
 
 // app の設定
 var app = express();
@@ -12,7 +13,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // JSONの送信を許可
 app.use(bodyParser.json()); // JSONのパースを楽に（受信時）
 app.use(express.static( path.join( __dirname, 'public' )));
 
-
+// responder の設定
+util.setResponder({
+  name: "BOT", // LIVEAGENT
+  status: "CONNECTED", // WAITING, DISCONNECTED
+  options: {}
+});
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {

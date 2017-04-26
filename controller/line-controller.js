@@ -1,13 +1,13 @@
 var bot = require("../libs/bot");
 var liveagent = require("../libs/liveagent");
 var util = require("../libs/utilities");
-
+/*
 var responder = {
   name: "BOT", // LIVEAGENT
   status: "CONNECTED", // WAITING, DISCONNECTED
   options: {}
 };
-
+*/
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
     var line = {
@@ -22,12 +22,19 @@ exports.processRequest = function(req) {
 
     util.getUserProfile(line, function(user) {
       line.user = user;
-      console.log(liveagent.liveagent);
-      if (liveagent.liveagent.session) {
-        routeEventToLiveagent(line, event);
-      } else {
-        routeEventToBot(line, event);
-      }
+      var responder = util.getResponder();
+      console.log(responder);
+
+         switch (responder.name) {
+          case 'BOT':          
+            routeEventToBot(line, event);
+            break;
+          case 'LIVEAGENT':
+            routeEventToLiveagent(line, event);
+            break;
+          default:
+            break;
+        }
     });
   });
 };
