@@ -235,7 +235,8 @@ function onQueueUpdate() {}
 function onFileTransfer() {}
 function onAvailability() {}
 
-exports.onEventRecieved = function(line, event) {
+exports.onEventRecieved = function(event) {
+  var line = util.getLineConnection();
   switch (event.type) {
     case "message":
       switch (event.message.type) {
