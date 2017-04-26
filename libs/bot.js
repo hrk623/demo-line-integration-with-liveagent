@@ -70,7 +70,7 @@ function onText(line, message) {
       altText: 'オペレータとチャットしますか？',
       template: {
         type: 'buttons',
-        thumbnailImageUrl: '/liveagent_invite.png',
+        thumbnailImageUrl: 'https://rocky-beach-18961.herokuapp.com/liveagent_invite.png',
         title: 'オペレータとチャット',
         text: 'オペレータならどんな悩みもすぐに解決！',
         actions: [{
