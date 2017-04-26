@@ -1,5 +1,6 @@
 exports.getResponder = function() {
-return require('../public/responder.json');
+   delete require.cache[require.resolve('../public/responder.json')];
+   return require('../public/responder.json');
 }
 
 exports.setResponder = function(responder) {
