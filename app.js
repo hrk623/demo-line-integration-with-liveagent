@@ -12,22 +12,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // JSONの送信を許可
 app.use(bodyParser.json()); // JSONのパースを楽に（受信時）
 app.use(express.static( path.join( __dirname, 'public' )));
 
-var liveagent = {
-    laPod: process.env.LIVEAGENT_POD,
-    orgId: process.env.LIVEAGENT_ORGANIZATION_ID,
-    deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
-    buttonId: process.env.LIVEAGENT_BUTTON_ID,
-};
-var line = {
-	channelId: process.env.LINE_CHANNEL_ID,
-	secret: process.env.LINE_CHANNEL_SECRET,
-    token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
-}
-var responder = {
-    name: 'BOT', // LIVEAGENT
-    status: 'CONNECTED', // WAITING, DISCONNECTED
-    options: {}
-};
 
 
 // Line からのリクエストを処理する。
