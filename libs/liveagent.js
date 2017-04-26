@@ -4,16 +4,14 @@ var USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 var API_VERSION = process.env.LIVEAGENT_API_VERSION || 39;
 
-
-exports.startSessionWithLine = function(line) {
-  var liveagent = util.getLiveagentConnection();
-  var line = util.getLineConnection();
-  createLiveAgentSession(liveagent, function() {
-    createChatVisitorSession(liveagent, line);
+exports.startSessionWithLine = function() {
+  createLiveAgentSession(function() {
+    createChatVisitorSession();
   });
 };
 
-function createLiveAgentSession(liveagent, callback) {
+function createLiveAgentSession(callback) {
+  var liveagent = util.getLiveagentConnection();
   var request = require("request");
   var options = {
     url: "https://" + liveagent.laPod + "/chat/rest/System/SessionId",
@@ -39,8 +37,11 @@ function createLiveAgentSession(liveagent, callback) {
   });
 }
 
-function createChatVisitorSession(liveagent, line) {
+function createChatVisitorSession() {
   var session = util.getSession();
+  var liveagent = util.getLiveagentConnection();
+  var line = util.getLineConnection();
+
   var request = require("request");
   var options = {
     url: "https://" + liveagent.laPod + "/chat/rest/Chasitor/ChasitorInit",
@@ -118,7 +119,7 @@ function createChatVisitorSession(liveagent, line) {
     session.sequence++;
     util.setSession(session);
 
-    monitorChatActivity(line, liveagent);
+    monitorChatActivity();
     util.setResponder({
       name: "LIVEAGENT", // LIVEAGENT
       status: "CONNECTED", // WAITING, DISCONNECTED
@@ -127,8 +128,10 @@ function createChatVisitorSession(liveagent, line) {
   });
 }
 
-function monitorChatActivity(line, liveagent) {
+function monitorChatActivity() {
+  var liveagent = util.getLiveagentConnection();
   var session = util.getSession();
+
   session.ack = session.ack === undefined ? -1 : session.ack;
   var request = require("request");
   var options = {
@@ -147,19 +150,20 @@ function monitorChatActivity(line, liveagent) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
     } else if (!error && response.statusCode == 204) {
-      monitorChatActivity(line, liveagent);
+      monitorChatActivity();
     } else {
       session.ack = body.sequence;
       util.setSession(session);
-      monitorChatActivity(line, liveagent);
+      monitorChatActivity();
       body.messages.forEach(function(message) {
-        onMessageRecieved(line, liveagent, message);
+        onMessageRecieved(message);
       });
     }
   });
 }
 
-function onMessageRecieved(line, liveagent, message) {
+function onMessageRecieved(message) {
+  var line = util.getLineConnection();
   switch (message.type) {
     case "ChatMessage":
       onChatMessage(line, message);
@@ -222,9 +226,15 @@ function onChatMessage(line, message) {
 
 function onAgentTyping() {}
 function onAgentNotTyping() {}
-function onAgentDisconnect() {}
+function onAgentDisconnect() {
+  util.initSession();
+  util.initRespoder();
+}
 function onChasitorSessionData() {}
-function onChatEnded() {}
+function onChatEnded() {
+  util.initSession();
+  util.initRespoder();
+}
 function onChatEstablished() {}
 function onChatRequestFail() {}
 function onChatRequestSuccess() {}
@@ -313,9 +323,7 @@ function uploadFile(options, content) {
   var session = util.getSession();
   var request = require("request");
   var query = "?orgId=" + liveagent.laPod;
-  query +=
-    "&chatKey=" +
-    session.key.slice(session.key.indexOf("!"));
+  query += "&chatKey=" + session.key.slice(session.key.indexOf("!"));
   query += "&fileToken=" + liveagent.file.fileToken;
   query += "&encoding=UTF-8";
   var options = {
