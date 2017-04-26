@@ -22,7 +22,8 @@ exports.processRequest = function(req) {
 
     util.getUserProfile(line, function(user) {
       line.user = user;
-      if (liveagent.isConnected()) {
+      console.log(liveagent.liveagent);
+      if (liveagent.liveagent.session) {
         routeEventToLiveagent(line, event);
       } else {
         routeEventToBot(line, event);
