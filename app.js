@@ -16,7 +16,7 @@ app.use(express.static( path.join( __dirname, 'public' )));
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
-  lineController.processRequest(req, liveagent, line, responder);
+  lineController.processRequest(req);
   res.send('SUCCESS');
 });
 
