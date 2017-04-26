@@ -3,10 +3,19 @@ var util = require('./utilities');
 var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
 var API_VERSION = process.env.LIVEAGENT_API_VERSION || 39;
 
-
 exports.startSessionWithLine = function (line) {
-  createLiveAgentSession ();
+  var liveagent = {
+    laPod: process.env.LIVEAGENT_POD,
+    orgId: process.env.LIVEAGENT_ORGANIZATION_ID,
+    deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
+    buttonId: process.env.LIVEAGENT_BUTTON_ID,
+};
+  createLiveAgentSession (liveagent, function(session) {
+     liveagent.session = liveagent;
+     createChatVisitorSession(liveagent, line);
+  })
 }
+
 
 function createLiveAgentSession (liveagent, callback) {
   var request = require('request');
@@ -24,19 +33,16 @@ function createLiveAgentSession (liveagent, callback) {
         handleError(error, body)
         return;
     }
-    liveagent.session = {
+    callback({
       key: body.key,
       affinity: body.affinityToken,
       id: body.id,
       sequence: 1
-    };
-    monitorChatActivity();
-    createChatVisitorSession();
-
+    });
   });
 }
 
-function createChatVisitorSession() {
+function createChatVisitorSession(liveagent, line) {
   var request = require('request');
   var options = {
     url: 'https://' + liveagent.laPod + '/chat/rest/Chasitor/ChasitorInit',
@@ -107,7 +113,7 @@ function createChatVisitorSession() {
   });
 }
 
-function monitorChatActivity() {
+function monitorChatActivity(liveagent) {
   liveagent.session.ack = liveagent.session.ack === undefined ? -1 : liveagent.session.ack;
   var request = require('request');
   var options = {
@@ -126,10 +132,10 @@ function monitorChatActivity() {
     if (error || response.statusCode != 200) {
       handleError(error, body)
     } else if (!error && response.statusCode == 204) {
-       monitorChatActivity();
+       monitorChatActivity(liveagent);
     } else {
       liveagent.session.ack = body.sequence;
-       monitorChatActivity();
+       monitorChatActivity(liveagent);
        body.messages.forEach(function(message) {
         onMessageRecieved(liveagent, message);
       });

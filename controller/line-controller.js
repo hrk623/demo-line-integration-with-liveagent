@@ -2,18 +2,31 @@ var bot = require('../libs/bot');
 var liveagent = require('../libs/liveagent');
 var util = require('../libs/utilities');
 
+var responder = {
+    name: 'BOT', // LIVEAGENT
+    status: 'CONNECTED', // WAITING, DISCONNECTED
+    options: {}
+};
+
+
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
-    line.user.id = event.source.userId || event.source.groupId || event.source.roomId;
-    //line.event = event;
-    util.getUserProfile(function(user) {
+var line = {
+channelId: process.env.LINE_CHANNEL_ID,
+secret: process.env.LINE_CHANNEL_SECRET,
+  token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+  user : {id:event.source.userId || event.source.groupId || event.source.roomId },
+  event: event,
+}
+
+    util.getUserProfile(line, function(user) {
       line.user = user;
         switch (responder.name) {
           case 'BOT':          
-            routeEventToBot(event);
+            routeEventToBot(line, event);
             break;
           case 'LIVEAGENT':
-            routeEventToLiveagent(event);
+            routeEventToLiveagent(line, event);
             break;
           default:
             break;
@@ -22,18 +35,18 @@ exports.processRequest = function(req) {
   });
 }
 
-function routeEventToBot(event) {
-  bot.onEventRecieved(event);
+function routeEventToBot(line, event) {
+  bot.onEventRecieved(line, event);
     if (event.type === 'postback') {
         var params = util.parseQuery(postback.data);
         if (params.target === 'liveagent' && params.action === 'start') {
-            liveagent.startSession();
+            liveagent.startSession(line);
         }
     }
 }
 
-function routeEventToLiveagent(event) {
-    liveagent.onEventRecieved(event);
+function routeEventToLiveagent(line, event) {
+    liveagent.onEventRecieved(line, event);
 }
 
 

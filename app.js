@@ -35,7 +35,7 @@ app.route('/line').post(function(req, res) {
 	console.log(liveagent);
 	console.log(line);
 	console.log(responder);
-  lineController.processRequest(req);
+  lineController.processRequest(req, liveagent, line, responder);
   res.send('SUCCESS');
 });
 
