@@ -213,10 +213,9 @@ function onMessageRecieved(line, liveagent, message) {
 }
 
 function onChatMessage(line, message) {
-  console.log(message);
   util.pushMessage(line, [{
     type: 'text',
-    text: message.text
+    text: message.message.text
   }]);
 }
 
