@@ -1,13 +1,7 @@
 var bot = require("../libs/bot");
 var liveagent = require("../libs/liveagent");
 var util = require("../libs/utilities");
-/*
-var responder = {
-  name: "BOT", // LIVEAGENT
-  status: "CONNECTED", // WAITING, DISCONNECTED
-  options: {}
-};
-*/
+
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
     var line = {

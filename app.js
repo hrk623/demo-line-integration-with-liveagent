@@ -19,6 +19,12 @@ util.setResponder({
   status: "CONNECTED", // WAITING, DISCONNECTED
   options: {}
 });
+// responder の設定
+util.setResponder({
+  name: "LIVEAGENT", // LIVEAGENT
+  status: "CONNECTED", // WAITING, DISCONNECTED
+  options: {}
+});
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
