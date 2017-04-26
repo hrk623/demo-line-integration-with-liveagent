@@ -87,7 +87,7 @@ exports.setLiveagentConnection = function(liveagent) {
   );
 };
 
-exports.replyMessage = function(line, messageList) {
+exports.replyMessage = function(line, event, messageList) {
   var request = require("request");
   //ヘッダーを定義
   var headers = {
@@ -95,7 +95,7 @@ exports.replyMessage = function(line, messageList) {
     Authorization: "Bearer {" + line.token + "}"
   };
   var body = {
-    replyToken: line.event.replyToken,
+    replyToken: event.replyToken,
     messages: messageList
   };
   var options = {
@@ -160,6 +160,7 @@ exports.getUserProfile = function(line, userId, callback) {
     };
     callback(user);
   });
+
 };
 
 exports.getContent = function(line, message, callback) {

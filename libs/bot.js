@@ -6,22 +6,22 @@ exports.onEventRecieved = function(event) {
     case 'message':
       switch (event.message.type) {
         case 'text':
-          onText(line, event.message);
+          onText(line, event);
           break;
         case 'image':
-          onImage(line, event.message);
+          onImage(line, event);
           break;
         case 'video':
-          onVideo(line, event.message);
+          onVideo(line, event);
           break;
         case 'audio':
-          onAudio(line, event.message);
+          onAudio(line, event);
           break;
         case 'location':
-          onLocation(line, event.message);
+          onLocation(line, event);
           break;
         case 'sticker':
-          onSticker(line, event.message);
+          onSticker(line, event);
           break;
         default:
           break;
@@ -40,17 +40,17 @@ exports.onEventRecieved = function(event) {
       onLeave(line);
       break;
     case 'postback':
-      onPostback(line, event.postback);
+      onPostback(line, event);
       break;
     case 'beacon':
-      onBeacon(line, event.beacon);
+      onBeacon(line, event);
       break;
     default:
       break;
   }
 }
 
-function onText(line, message) {
+function onText(line, event) {
   var patterns = [{
     key: /こんにちは|ハロー/,
     messages: [{
@@ -82,14 +82,14 @@ function onText(line, message) {
     }]
   }];
   var matchedPattern = patterns.filter(function(pattern) {
-    return pattern.key.test(message.text);
+    return pattern.key.test(event.message.text);
   });
-  util.replyMessage(line, matchedPattern[0].messages);
+  util.replyMessage(line, event, matchedPattern[0].messages);
 }
 
 
-function onImage(line, message) {
-  util.getContent(line, message, function(content) {
+function onImage(line, event) {
+  util.getContent(line, event.message, function(content) {
     var messages = [{
       type: 'text',
       text: '画像を受け取ったよ！'
@@ -97,12 +97,12 @@ function onImage(line, message) {
       type: 'text',
       text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトだね！'
     }];
-    util.replyMessage(line, messages);
+    util.replyMessage(line, event, messages);
   });
 }
 
-function onVideo(line, message) {
-  util.getContent(line, message, function(content) {
+function onVideo(line, event) {
+  util.getContent(line, event.message, function(content) {
     var messages = [{
       type: 'text',
       text: '動画を受け取ったよ！'
@@ -110,12 +110,12 @@ function onVideo(line, message) {
       type: 'text',
       text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトだね！'
     }];
-    util.replyMessage(line, messages);
+    util.replyMessage(line, event, messages);
   });
 }
 
-function onAudio(line, message) {
-  util.getContent(line, message, function(content) {
+function onAudio(line, event) {
+  util.getContent(line, event.message, function(content) {
     var messages = [{
       type: 'text',
       text: '音声を受け取ったよ！'
@@ -123,14 +123,14 @@ function onAudio(line, message) {
       type: 'text',
       text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトだね！'
     }];
-    util.replyMessage(line, messages);
+    util.replyMessage(line, event, messages);
   });
 }
 
-function onLocation(line, message) {
+function onLocation(line, event) {
   var messages = [{
     type: 'text',
-    text: message.address + 'にいるんだね！'
+    text: event.message.address + 'にいるんだね！'
   }, {
     type: 'text',
     text: 'ボクはここにいるよ！'
@@ -141,27 +141,27 @@ function onLocation(line, message) {
     latitude: 35.6800059,
     longitude: 139.7643227
   }];
-  util.replyMessage(line, messages);
+  util.replyMessage(line, event, messages);
 }
 
-function onSticker(line, message) {
+function onSticker(line, event) {
   var messages = [{
     type: 'text',
     text: '良いスタンプだね！'
   }];
-  util.replyMessage(line, messages);
+  util.replyMessage(line, event, messages);
 }
 
-function onFollow(line) {}
+function onFollow(line, event) {}
 
-function onUnfollow(line) {}
+function onUnfollow(line, event) {}
 
-function onJoin(line) {}
+function onJoin(line, event) {}
 
-function onLeave(line) {}
+function onLeave(line, event) {}
 
-function onPostback(line, postback) {
-  var params = util.parseQuery(postback.data);
+function onPostback(line, event) {
+  var params = util.parseQuery(event.postback.data);
   switch (params.target) {
     case 'liveagent':
       if (params.action === 'start') {
@@ -169,7 +169,7 @@ function onPostback(line, postback) {
           type: 'text',
           text: 'ちょっとまってね'
         }];
-        util.replyMessage(line, messages);
+        util.replyMessage(line, event, messages);
       }
       break;
     default:
@@ -177,4 +177,4 @@ function onPostback(line, postback) {
   }
 }
 
-function onBeacon(line, beacon) {}
+function onBeacon(line, event) {}
