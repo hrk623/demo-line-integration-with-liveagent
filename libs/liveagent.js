@@ -237,6 +237,7 @@ function onAvailability() {}
 
 exports.onEventRecieved = function(event) {
   var line = util.getLineConnection();
+  var liveagent = util.getLiveagentConnection();
   switch (event.type) {
     case "message":
       switch (event.message.type) {
