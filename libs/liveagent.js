@@ -344,8 +344,9 @@ function uploadFile (options, content) {
 }
 
 function handleError(error, body) {
-  console.error(body.message);
-  if (body.details && body.details.length > 0) {
+  console.log(error);
+  if (body && body.details && body.details.length > 0) {
+    console.error(body.message);
     body.details.forEach(function(detail) {
       console.error(detail.property + ': ' + detail.message);
     });
