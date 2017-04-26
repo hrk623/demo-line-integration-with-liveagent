@@ -10,11 +10,6 @@ var liveagent = {
     buttonId: process.env.LIVEAGENT_BUTTON_ID,
 };
 
-exports.isConnected = function(){
-  console.log(liveagent);
-  return liveagent.session != null;
-}
-
 exports.startSessionWithLine = function (line) {
   var liveagent = {
     laPod: process.env.LIVEAGENT_POD,
