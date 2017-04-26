@@ -10,7 +10,8 @@ var liveagent = {
 };
 
 exports.isConnected = function(){
-  return liveagent.session;
+  console.log(liveagent);
+  return liveagent.session != null;
 }
 
 exports.startSessionWithLine = function (line) {
@@ -120,8 +121,6 @@ function createChatVisitorSession(liveagent, line) {
       return;
     }
     liveagent.session.sequence++;
-
-    console.log('start monitor');
     monitorChatActivity(line, liveagent);
   });
 }
@@ -143,9 +142,6 @@ function monitorChatActivity(line, liveagent) {
     json: true
   };
   request.get(options, function(error, response, body) {
-    console.log('response recieved');
-    console.log(body);
-
     if (error || response.statusCode != 200) {
       handleError(error, body)
     } else if (!error && response.statusCode == 204) {
