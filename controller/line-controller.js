@@ -4,22 +4,13 @@ var util = require("../libs/utilities");
 
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
-    var line = {
-      channelId: process.env.LINE_CHANNEL_ID,
-      secret: process.env.LINE_CHANNEL_SECRET,
-      token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
-      user: {
-        id: event.source.userId || event.source.groupId || event.source.roomId
-      },
-      event: event
-    };
+    var line = util.getLineConnection();
+    line.user = {id: event.source.userId || event.source.groupId || event.source.roomId};
+    line.event = event;
 
     util.getUserProfile(line, function(user) {
       line.user = user;
       var responder = util.getResponder();
-      console.log('CURRENT RESPONDER: ');
-      console.log(responder);
-
          switch (responder.name) {
           case 'BOT':          
             routeEventToBot(line, event);

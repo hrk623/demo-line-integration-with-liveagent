@@ -14,11 +14,15 @@ app.use(bodyParser.json()); // JSONのパースを楽に（受信時）
 app.use(express.static( path.join( __dirname, 'public' )));
 
 // responder の設定
-util.setResponder({
-  name: "BOT", // LIVEAGENT
-  status: "CONNECTED", // WAITING, DISCONNECTED
-  options: {}
-});
+util.initResponder();
+util.initSession();
+util.initLiveagentConnection();
+util.initLineConnection();
+
+console.log(util.getResponder());
+console.log(util.getLineConnection());
+console.log(util.getLiveagentConnection());
+console.log(util.getSession());
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
