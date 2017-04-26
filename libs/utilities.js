@@ -1,10 +1,10 @@
 exports.getResponder = function() {
-return require('./tmp/responder');
+return require('../tmp/responder.json');
 }
 
 exports.setResponder = function(responder) {
 var fs = require('fs');
-fs.writeFile( './tmp/responder.js', JSON.stringify( responder ), 'utf8', function(){
+fs.writeFile( './tmp/responder.json', JSON.stringify( responder ), 'utf8', function(){
   console.log('responder updated: ' + JSON.stringify( responder ));
 });
 }
