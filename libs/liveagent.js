@@ -10,7 +10,7 @@ exports.startSessionWithLine = function (line) {
     deploymentId: process.env.LIVEAGENT_DEPLOYMENT_ID,
     buttonId: process.env.LIVEAGENT_BUTTON_ID,
 };
-  createLiveAgentSession (liveagent, function(session) {
+  createLiveAgentSession(liveagent, function(session) {
      liveagent.session = liveagent;
      createChatVisitorSession(liveagent, line);
   })

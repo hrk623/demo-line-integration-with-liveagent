@@ -38,7 +38,7 @@ secret: process.env.LINE_CHANNEL_SECRET,
 function routeEventToBot(line, event) {
   bot.onEventRecieved(line, event);
     if (event.type === 'postback') {
-        var params = util.parseQuery(postback.data);
+        var params = util.parseQuery(event.postback.data);
         if (params.target === 'liveagent' && params.action === 'start') {
             liveagent.startSession(line);
         }
