@@ -285,7 +285,6 @@ exports.onEventRecieved = function(line, event) {
 }
 
 function sendMessage(liveagent, text) {
-  session.getSession(globalId, function(err, ses) {
     var request = require('request');
     var options = {
       url: 'https://' + liveagent.laPod + '/chat/rest/Chasitor/ChatMessage',
@@ -306,7 +305,6 @@ function sendMessage(liveagent, text) {
         return;
       }
     });
-  });
 }
 
 function uploadFile (options, content) {

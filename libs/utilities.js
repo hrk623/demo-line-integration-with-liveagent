@@ -5,12 +5,7 @@ exports.getResponder = function() {
 
 exports.setResponder = function(responder) {
 var fs = require('fs');
-fs.writeFile('./public/responder.json', JSON.stringify(responder), 'utf8', function (err,data) {
-  if (err) {
-    return console.log(err);
-  }
-  console.log(responder);
-  });
+fs.writeFile('./public/responder.json', JSON.stringify(responder), 'utf8', function (err,data) {});
 }
 
 
