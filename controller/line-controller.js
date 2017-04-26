@@ -1,75 +1,58 @@
-var bot = require('../libs/bot');
-var liveagent = require('../libs/liveagent');
-var util = require('../libs/utilities');
+var bot = require("../libs/bot");
+var liveagent = require("../libs/liveagent");
+var util = require("../libs/utilities");
 
 var responder = {
-    name: 'BOT', // LIVEAGENT
-    status: 'CONNECTED', // WAITING, DISCONNECTED
-    options: {}
+  name: "BOT", // LIVEAGENT
+  status: "CONNECTED", // WAITING, DISCONNECTED
+  options: {}
 };
-
 
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
-var line = {
-channelId: process.env.LINE_CHANNEL_ID,
-secret: process.env.LINE_CHANNEL_SECRET,
-  token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
-  user : {id:event.source.userId || event.source.groupId || event.source.roomId },
-  event: event,
-}
+    var line = {
+      channelId: process.env.LINE_CHANNEL_ID,
+      secret: process.env.LINE_CHANNEL_SECRET,
+      token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+      user: {
+        id: event.source.userId || event.source.groupId || event.source.roomId
+      },
+      event: event
+    };
 
     util.getUserProfile(line, function(user) {
       line.user = user;
-
-if (liveagent.isConnected()) {
-  routeEventToLiveagent(line, event);
-
-} else {
-  routeEventToBot(line, event);
-}
-/*
-        switch (responder.name) {
-          case 'BOT':          
-            routeEventToBot(line, event);
-            break;
-          case 'LIVEAGENT':
-            routeEventToLiveagent(line, event);
-            break;
-          default:
-            break;
-        }
-
-        */
+      if (liveagent.isConnected()) {
+        routeEventToLiveagent(line, event);
+      } else {
+        routeEventToBot(line, event);
+      }
     });
   });
-}
+};
 
 function routeEventToBot(line, event) {
   bot.onEventRecieved(line, event);
-    if (event.type === 'postback') {
-        var params = util.parseQuery(event.postback.data);
-        if (params.target === 'liveagent' && params.action === 'start') {
-            liveagent.startSessionWithLine(line, responder);
-        }
+  if (event.type === "postback") {
+    var params = util.parseQuery(event.postback.data);
+    if (params.target === "liveagent" && params.action === "start") {
+      liveagent.startSessionWithLine(line, responder);
     }
+  }
 }
 
 function routeEventToLiveagent(line, event) {
-    liveagent.onEventRecieved(line, event);
+  liveagent.onEventRecieved(line, event);
 }
-
 
 function handleError(error, body) {
   console.error(body.message);
   if (body.details && body.details.length > 0) {
     body.details.forEach(function(detail) {
-      console.error(detail.property + ': ' + detail.message);
+      console.error(detail.property + ": " + detail.message);
     });
   }
 }
-
-
 
 /*
 transaction = {

@@ -122,11 +122,11 @@ function createChatVisitorSession(liveagent, line) {
     liveagent.session.sequence++;
 
     console.log('start monitor');
-    monitorChatActivity(liveagent);
+    monitorChatActivity(line, liveagent);
   });
 }
 
-function monitorChatActivity(liveagent) {
+function monitorChatActivity(line, liveagent) {
 
   liveagent.session.ack = liveagent.session.ack === undefined ? -1 : liveagent.session.ack;
   var request = require('request');
@@ -149,21 +149,21 @@ function monitorChatActivity(liveagent) {
     if (error || response.statusCode != 200) {
       handleError(error, body)
     } else if (!error && response.statusCode == 204) {
-       monitorChatActivity(liveagent);
+       monitorChatActivity(line, liveagent);
     } else {
       liveagent.session.ack = body.sequence;
-       monitorChatActivity(liveagent);
+       monitorChatActivity(line, liveagent);
        body.messages.forEach(function(message) {
-        onMessageRecieved(liveagent, message);
+        onMessageRecieved(line, liveagent, message);
       });
     }
   });
 }
 
-function onMessageRecieved(liveagent, message) {
+function onMessageRecieved(line, liveagent, message) {
   switch (message.type) {
     case 'ChatMessage':
-      onChatMessage(message);
+      onChatMessage(line, message);
       break;
     case 'AgentTyping':
       onAgentTyping();
@@ -212,8 +212,8 @@ function onMessageRecieved(liveagent, message) {
   }
 }
 
-function onChatMessage(message) {
-  util.pushMessage(conn, [{
+function onChatMessage(line, message) {
+  util.pushMessage(line, [{
     type: 'text',
     text: msg.message.text
   }]);
@@ -236,25 +236,6 @@ function onAvailability() {}
 
 
 exports.onEventRecieved = function(line, event) {
-   var liveagent = {
-    laPod: 'd.la10.salesforceliveagent.com',
-    orgId: '00D6F000001dAw8',
-    deploymentId: '5726F000000PRZ1',
-    buttonId: '5736F000000PRfz',
-    session: {
-      id: String,
-      key: String,
-      affinity: String,
-      sequence: Number,
-      ack: Number
-    },
-    file: {
-      uploadServletUrl: String,
-      fileToken: String,
-      cdmServletUrl: String
-    }
-  };
-
   switch (event.type) {
     case 'message':
       switch (event.message.type) {
