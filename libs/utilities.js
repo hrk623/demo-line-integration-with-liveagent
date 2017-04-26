@@ -66,7 +66,7 @@ exports.pushMessage = function (line, messageList) {
     proxy: process.env.FIXIE_URL,
     headers: headers,
     json: true,
-    body: messageList
+    body: {to: line.user.id, messages: messageList}
   };
 
 console.log('messageList');
