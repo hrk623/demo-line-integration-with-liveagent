@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var lineController = require('./controller/line-controller');
-var util = require("../libs/utilities");
+var util = require("./libs/utilities");
 
 // app の設定
 var app = express();
