@@ -147,9 +147,10 @@ function monitorChatActivity() {
     json: true
   };
   request.get(options, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      handleError(error, body);
-    } else if (!error && response.statusCode == 204) {
+    //if (error || response.statusCode != 200) {
+    //  handleError(error, body);
+    //} else
+    if (!error && response.statusCode == 204) {
       monitorChatActivity();
     } else {
       session.ack = body.sequence;
