@@ -5,13 +5,9 @@ var util = require("../libs/utilities");
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
     var line = util.getLineConnection();
-    line.user = {
-      id: event.source.userId || event.source.groupId || event.source.roomId
-    };
-    line.event = event;
-
     if (!line.user) {
-      util.getUserProfile(line, function(user) {
+      var userId = event.source.userId || event.source.groupId || event.source.roomId;
+      util.getUserProfile(line, userId, function(user) {
         line.user = user;
         util.setLineConnection(line);
         routeEvent(event);

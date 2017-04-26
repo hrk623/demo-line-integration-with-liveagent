@@ -138,7 +138,7 @@ exports.pushMessage = function(line, messageList) {
   });
 };
 
-exports.getUserProfile = function(line, callback) {
+exports.getUserProfile = function(line, userId, callback) {
   var request = require("request");
   var options = {
     url: "https://api.line.me/v2/bot/profile/" + line.user.id,
