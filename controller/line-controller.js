@@ -40,7 +40,7 @@ function routeEventToBot(line, event) {
     if (event.type === 'postback') {
         var params = util.parseQuery(event.postback.data);
         if (params.target === 'liveagent' && params.action === 'start') {
-            liveagent.startSession(line);
+            liveagent.startSessionWithLine(line);
         }
     }
 }
