@@ -21,6 +21,14 @@ secret: process.env.LINE_CHANNEL_SECRET,
 
     util.getUserProfile(line, function(user) {
       line.user = user;
+
+if (liveagent.isConnected()) {
+  routeEventToLiveagent(line, event);
+
+} else {
+  routeEventToBot(line, event);
+}
+/*
         switch (responder.name) {
           case 'BOT':          
             routeEventToBot(line, event);
@@ -31,6 +39,8 @@ secret: process.env.LINE_CHANNEL_SECRET,
           default:
             break;
         }
+
+        */
     });
   });
 }
@@ -40,7 +50,7 @@ function routeEventToBot(line, event) {
     if (event.type === 'postback') {
         var params = util.parseQuery(event.postback.data);
         if (params.target === 'liveagent' && params.action === 'start') {
-            liveagent.startSessionWithLine(line);
+            liveagent.startSessionWithLine(line, responder);
         }
     }
 }
