@@ -1,7 +1,6 @@
 var util = require('./utilities');
 
 exports.onEventRecieved = function(line, event) {
-  console.log(event);
   switch (event.type) {
     case 'message':
       switch (event.message.type) {

@@ -17,6 +17,7 @@ exports.processRequest = function(req) {
     util.getUserProfile(line, function(user) {
       line.user = user;
       var responder = util.getResponder();
+      console.log('CURRENT RESPONDER: ');
       console.log(responder);
 
          switch (responder.name) {

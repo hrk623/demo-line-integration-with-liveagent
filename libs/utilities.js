@@ -81,9 +81,6 @@ exports.pushMessage = function (line, messageList) {
     body: {to: line.user.id, messages: messageList}
   };
 
-console.log('messageList');
-  console.log(messageList);
-
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
