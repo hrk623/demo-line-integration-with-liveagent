@@ -316,6 +316,8 @@ function sendMessage(liveagent, text) {
       handleError(error, body);
       return;
     }
+    session.sequence++;
+    util.setSession(session);
   });
 }
 
