@@ -120,11 +120,14 @@ function createChatVisitorSession(liveagent, line) {
       return;
     }
     liveagent.session.sequence++;
+
+    console.log('start monitor');
     monitorChatActivity(liveagent);
   });
 }
 
 function monitorChatActivity(liveagent) {
+
   liveagent.session.ack = liveagent.session.ack === undefined ? -1 : liveagent.session.ack;
   var request = require('request');
   var options = {
@@ -140,6 +143,9 @@ function monitorChatActivity(liveagent) {
     json: true
   };
   request.get(options, function(error, response, body) {
+    console.log('response recieved');
+    console.log(body);
+
     if (error || response.statusCode != 200) {
       handleError(error, body)
     } else if (!error && response.statusCode == 204) {
