@@ -15,7 +15,7 @@ exports.getSession = function() {
 
 exports.setSession = function(session) {
 var fs = require('fs');
-fs.writeFileSync('./public/session.json', JSON.stringify(responder), 'utf8');
+fs.writeFileSync('./public/session.json', JSON.stringify(session), 'utf8');
 }
 
 exports.replyMessage = function(line, messageList) {
