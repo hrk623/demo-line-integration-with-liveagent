@@ -11,7 +11,7 @@ exports.startSessionWithLine = function (line) {
     buttonId: process.env.LIVEAGENT_BUTTON_ID,
 };
   createLiveAgentSession(liveagent, function(session) {
-     liveagent.session = liveagent;
+     liveagent.session = session;
      createChatVisitorSession(liveagent, line);
   })
 }
@@ -48,21 +48,21 @@ function createChatVisitorSession(liveagent, line) {
     url: 'https://' + liveagent.laPod + '/chat/rest/Chasitor/ChasitorInit',
     headers: {
       'X-LIVEAGENT-API-VERSION': API_VERSION,
-      'X-LIVEAGENT-SESSION-KEY': session.key,
-      'X-LIVEAGENT-SEQUENCE': session.sequence,
-      'X-LIVEAGENT-AFFINITY': session.affinity
+      'X-LIVEAGENT-SESSION-KEY': liveagent.session.key,
+      'X-LIVEAGENT-SEQUENCE': liveagent.session.sequence,
+      'X-LIVEAGENT-AFFINITY': liveagent.session.affinity
     },
     json: true,
     body: {
       organizationId: liveagent.orgId,
       deploymentId: liveagent.deploymentId,
       buttonId: liveagent.buttonId,
-      sessionId: session.id,
+      sessionId: liveagent.session.id,
       trackingId: '',
       userAgent: USER_AGENT,
       language: 'ja',
       screenResolution: '3200x1800',
-      visitorName: line.userName,
+      visitorName: line.user.displayName,
       prechatDetails: [{
         label: 'ContactLineId',
         value: line.user.id,
