@@ -246,16 +246,15 @@ function onFileTransfer(message) {
 
   if (message.message.type === 'Requested') {
     var session = util.getSession();
-  session.file = message.message;
-  util.setSession(session);
-} else if (message.message.type === 'Canceled') {
-  var session = util.getSession();
-  session.file = null;
-  util.setSession(session);
-}
+    session.file = message.message;
+    util.setSession(session);
+  } else if (message.message.type === 'Canceled') {
+    var session = util.getSession();
+    session.file = null;
+    util.setSession(session);
+  }
 }
   
-}
 function onAvailability() {}
 
 exports.onEventRecieved = function(event) {
