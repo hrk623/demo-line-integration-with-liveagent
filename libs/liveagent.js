@@ -146,14 +146,9 @@ function monitorChatActivity() {
     json: true
   };
   request.get(options, function(error, response, body) {
-    if (!util.getSession().key) return;
-
-    //if (error || response.statusCode != 200) {
-    //  handleError(error, body);
-    //} else
-    if (!error && response.statusCode == 204) {
+    if (response.statusCode == 204) {
       monitorChatActivity();
-    } else {
+    } else if (response.statusCode == 200) {
       session.ack = body.sequence;
       util.setSession(session);  
       body.messages.forEach(function(message) {
@@ -161,6 +156,8 @@ function monitorChatActivity() {
         monitorChatActivity();
         onMessageRecieved(message);
       });
+    } else {
+      handleError(error, body);
     }
   });
 }
