@@ -338,7 +338,7 @@ function uploadFile(options, content) {
   var liveagent = util.getLiveagentConnection();
   var request = require("request");
   var query = "?orgId=" + liveagent.laPod;
-  query += "&chatKey=" + session.key.slice(session.key.indexOf("!"));
+  query += "&chatKey=" + session.key.slice(0, session.key.indexOf("!"));
   query += "&fileToken=" + session.file.fileToken;
   query += "&encoding=UTF-8";
 
