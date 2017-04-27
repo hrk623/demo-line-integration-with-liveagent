@@ -236,7 +236,11 @@ function onChatEnded() {
   util.initResponder();
 }
 function onChatEstablished() {}
-function onChatRequestFail() {}
+function onChatRequestFail() {
+util.initSession();
+  util.initResponder();
+  
+}
 function onChatRequestSuccess() {}
 function onChatTransferred() {}
 function onCustomEvent() {}
