@@ -243,9 +243,18 @@ function onCustomEvent() {}
 function onNewVisitorBreadcrumb() {}
 function onQueueUpdate() {}
 function onFileTransfer(message) {
-  var session = util.getSession();
+
+  if (message.message.type === 'Requested') {
+    var session = util.getSession();
   session.file = message.message;
   util.setSession(session);
+} else if (message.message.type === 'Canceled') {
+  var session = util.getSession();
+  session.file = null;
+  util.setSession(session);
+}
+}
+  
 }
 function onAvailability() {}
 
@@ -333,6 +342,8 @@ function uploadFile(options, content) {
   query += "&chatKey=" + session.key.slice(session.key.indexOf("!"));
   query += "&fileToken=" + session.file.fileToken;
   query += "&encoding=UTF-8";
+
+  console.log(session.file.uploadServletUrl + query);
   var options = {
     url: session.file.uploadServletUrl + query,
     headers: {
@@ -356,7 +367,7 @@ function uploadFile(options, content) {
       return;
     }
     console.log('File Uploaded!');
-    console.log(body);
+    console.log(response);
   });
 }
 
