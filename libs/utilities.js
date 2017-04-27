@@ -183,6 +183,7 @@ exports.getContent = function(line, message, callback) {
       length: response.headers["content-length"],
       data: body
     };
+    console.log(content);
     callback(content);
   });
 };
