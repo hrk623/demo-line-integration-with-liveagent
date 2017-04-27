@@ -205,7 +205,7 @@ function onMessageRecieved(message) {
       onQueueUpdate();
       break;
     case "FileTransfer":
-      onFileTransfer();
+      onFileTransfer(message);
       break;
     case "Availability":
       onAvailability();
@@ -242,7 +242,11 @@ function onChatTransferred() {}
 function onCustomEvent() {}
 function onNewVisitorBreadcrumb() {}
 function onQueueUpdate() {}
-function onFileTransfer() {}
+function onFileTransfer(message) {
+  var session = util.getSession();
+  session.file = message.message;
+  util.setSession(session);
+}
 function onAvailability() {}
 
 exports.onEventRecieved = function(event) {
@@ -323,23 +327,24 @@ function sendMessage(liveagent, text) {
 
 function uploadFile(options, content) {
   var session = util.getSession();
+  var liveagent = util.getLiveagentConnection();
   var request = require("request");
   var query = "?orgId=" + liveagent.laPod;
   query += "&chatKey=" + session.key.slice(session.key.indexOf("!"));
-  query += "&fileToken=" + liveagent.file.fileToken;
+  query += "&fileToken=" + session.file.fileToken;
   query += "&encoding=UTF-8";
   var options = {
-    url: liveagent.file.uploadServletUrl + query,
+    url: session.file.uploadServletUrl + query,
     headers: {
-      Referer: liveagent.file.cdmServletUrl,
+      Referer: session.file.cdmServletUrl,
       "User-Agent": USER_AGENT
     },
     formData: {
-      filename: "test.jpg",
+      filename: "attachment.jpg",
       file: {
         value: content.data,
         options: {
-          filename: "test.jpg",
+          filename: "attachment.jpg",
           contentType: content.type
         }
       }
