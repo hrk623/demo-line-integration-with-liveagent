@@ -230,12 +230,12 @@ function onAgentTyping() {}
 function onAgentNotTyping() {}
 function onAgentDisconnect() {
   util.initSession();
-  util.initRespoder();
+  util.initResponder();
 }
 function onChasitorSessionData() {}
 function onChatEnded() {
   util.initSession();
-  util.initRespoder();
+  util.initResponder();
 }
 function onChatEstablished() {}
 function onChatRequestFail() {}
