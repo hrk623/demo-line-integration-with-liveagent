@@ -355,6 +355,8 @@ function uploadFile(options, content) {
       handleError(error, body);
       return;
     }
+    console.log('File Uploaded!');
+    console.log(body);
   });
 }
 
