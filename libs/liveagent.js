@@ -239,7 +239,7 @@ function onChatEstablished() {}
 function onChatRequestFail() {
 util.initSession();
   util.initResponder();
-  
+
 }
 function onChatRequestSuccess() {}
 function onChatTransferred() {}
@@ -364,13 +364,13 @@ function uploadFile(options, content) {
       }
     }
   };
+  console.log('File Uploaded!');
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
       return;
     }
     console.log('File Uploaded!');
-    console.log(response);
   });
 }
 
