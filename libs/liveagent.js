@@ -129,7 +129,6 @@ function createChatVisitorSession() {
 }
 
 function monitorChatActivity() {
-  console.log('ロングポーリング');
   var liveagent = util.getLiveagentConnection();
   var session = util.getSession();
   session.ack = session.ack === undefined ? -1 : session.ack;
@@ -147,6 +146,8 @@ function monitorChatActivity() {
     json: true
   };
   request.get(options, function(error, response, body) {
+    if (!util.getSession().key) return;
+
     //if (error || response.statusCode != 200) {
     //  handleError(error, body);
     //} else
@@ -154,10 +155,10 @@ function monitorChatActivity() {
       monitorChatActivity();
     } else {
       session.ack = body.sequence;
-      util.setSession(session);
-      monitorChatActivity();
+      util.setSession(session);  
       body.messages.forEach(function(message) {
-          console.log(message);
+        console.log(message);
+        monitorChatActivity();
         onMessageRecieved(message);
       });
     }
