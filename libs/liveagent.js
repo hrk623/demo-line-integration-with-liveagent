@@ -260,7 +260,7 @@ function onCustomEvent() {}
 function onNewVisitorBreadcrumb() {}
 function onQueueUpdate() {}
 function onFileTransfer(message) {
-
+  var line = util.getLineConnection();
   if (message.message.type === 'Requested') {
     var session = util.getSession();
     session.file = message.message;
