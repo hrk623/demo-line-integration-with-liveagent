@@ -58,24 +58,24 @@ function onText(line, event) {
       text: 'こんにちは、' + line.user.name + 'さん'
     }, {
       type: 'text',
-      text: '今日は何して遊びますか？'
+      text: '何かお困りですか？'
     }]
   }, {
     key: /./,
     messages: [{
       type: 'text',
-      text: 'ごめんなさい。よくわからないです・・・'
+      text: 'すみません。なんと仰ったのか分かりませんでした。'
     }, {
       type: 'template',
       altText: 'オペレータとチャットしますか？',
       template: {
         type: 'buttons',
         thumbnailImageUrl: 'https://rocky-beach-18961.herokuapp.com/liveagent_invite.png',
-        title: 'オペレータとチャット',
-        text: 'オペレータならどんな悩みもすぐに解決！',
+        title: '答えが見つかりませんか？',
+        text: '今すぐチャットでオペレータに質問してみましょう。',
         actions: [{
           type: 'postback',
-          label: 'チャットする',
+          label: 'チャットを開始',
           data: 'target=liveagent&action=start'
         }]
       }
@@ -92,10 +92,10 @@ function onImage(line, event) {
   util.getContent(line, event.message, function(content) {
     var messages = [{
       type: 'text',
-      text: '画像を受け取ったよ！'
+      text: '画像を受け取りました。'
     }, {
       type: 'text',
-      text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトだね！'
+      text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトです。'
     }];
     util.replyMessage(line, event, messages);
   });
@@ -105,10 +105,10 @@ function onVideo(line, event) {
   util.getContent(line, event.message, function(content) {
     var messages = [{
       type: 'text',
-      text: '動画を受け取ったよ！'
+      text: '動画を受け取りました。'
     }, {
       type: 'text',
-      text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトだね！'
+      text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトです。'
     }];
     util.replyMessage(line, event, messages);
   });
@@ -118,10 +118,10 @@ function onAudio(line, event) {
   util.getContent(line, event.message, function(content) {
     var messages = [{
       type: 'text',
-      text: '音声を受け取ったよ！'
+      text: '音声を受け取りました。'
     }, {
       type: 'text',
-      text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトだね！'
+      text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトです。'
     }];
     util.replyMessage(line, event, messages);
   });
@@ -136,7 +136,7 @@ function onLocation(line, event) {
     text: 'ボクはここにいるよ！'
   }, {
     type: 'location',
-    title: 'Cloudyの居場所',
+    title: '現在地',
     address: '〒100 - 0005 東京都千代田区丸の内２丁目７−２',
     latitude: 35.6800059,
     longitude: 139.7643227
@@ -167,7 +167,7 @@ function onPostback(line, event) {
       if (params.action === 'start') {
         messages = [{
           type: 'text',
-          text: 'ちょっとまってね'
+          text: 'オペレーターを呼び出します。'
         }];
         util.replyMessage(line, event, messages);
       }

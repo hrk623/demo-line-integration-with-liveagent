@@ -4,13 +4,22 @@ var USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 var API_VERSION = process.env.LIVEAGENT_API_VERSION || 39;
 
+
+// Liveagent チャットを開始する
+// 1. Session key を取得
+// 2. 訪問者を登録
+// 3. イベントの監視をスタート
 exports.startSessionWithLine = function() {
-  createLiveAgentSession(function() {
-    createChatVisitorSession();
-  });
+  createLiveAgentSession(
+    onCreateLiveAgentSessionFailed,
+    createChatVisitorSession(
+      onCreateChatVisitorSessionFailed, 
+      monitorChatActivity(
+        onMonitorChatActivityFailed, 
+        processMessage)));
 };
 
-function createLiveAgentSession(callback) {
+function createLiveAgentSession(onFailure, onSuccess) {
   var liveagent = util.getLiveagentConnection();
   var request = require("request");
   var options = {
@@ -24,7 +33,7 @@ function createLiveAgentSession(callback) {
   };
   request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      handleError(error, body);
+      onFailure(error, body);
       return;
     }
     util.setSession({
@@ -33,11 +42,13 @@ function createLiveAgentSession(callback) {
       id: body.id,
       sequence: 1
     });
-    callback();
+    onSuccess();
   });
 }
 
-function createChatVisitorSession() {
+
+
+function createChatVisitorSession(onFailure, onSuccess) {
   var session = util.getSession();
   var liveagent = util.getLiveagentConnection();
   var line = util.getLineConnection();
@@ -60,7 +71,7 @@ function createChatVisitorSession() {
       trackingId: "",
       userAgent: USER_AGENT,
       language: "ja",
-      screenResolution: "3200x1800",
+      screenResolution: "750x1334",
       visitorName: line.user.displayName,
       prechatDetails: [
         {
@@ -113,31 +124,28 @@ function createChatVisitorSession() {
 
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      handleError(error, body);
+      onFailure(error, body);
       return;
     }
     session.sequence++;
     util.setSession(session);
-
-    monitorChatActivity();
     util.setResponder({
       name: "LIVEAGENT", // LIVEAGENT
       status: "CONNECTED", // WAITING, DISCONNECTED
       options: {}
     });
+    onSuccess();
   });
 }
 
-function monitorChatActivity() {
+function monitorChatActivity(onFailure, onMessageRecieved) {
   var liveagent = util.getLiveagentConnection();
   var session = util.getSession();
   session.ack = session.ack === undefined ? -1 : session.ack;
   var request = require("request");
   var options = {
     url: "https://" + liveagent.laPod + "/chat/rest/System/Messages",
-    qs: {
-      ack: session.ack
-    },
+    qs: {　ack: session.ack　},
     headers: {
       "X-LIVEAGENT-API-VERSION": API_VERSION,
       "X-LIVEAGENT-SESSION-KEY": session.key,
@@ -157,16 +165,15 @@ function monitorChatActivity() {
         onMessageRecieved(message);
       });
     } else {
-      handleError(error, body);
+      onFailure(error, body);
     }
   });
 }
 
-function onMessageRecieved(message) {
-  var line = util.getLineConnection();
+function processMessage(message) {
   switch (message.type) {
     case "ChatMessage":
-      onChatMessage(line, message);
+      onChatMessage(message);
       break;
     case "AgentTyping":
       onAgentTyping();
@@ -215,7 +222,8 @@ function onMessageRecieved(message) {
   }
 }
 
-function onChatMessage(line, message) {
+function onChatMessage(message) {
+  var line = util.getLineConnection();
   util.pushMessage(line, [
     {
       type: "text",
@@ -229,17 +237,28 @@ function onAgentNotTyping() {}
 function onAgentDisconnect() {
   util.initSession();
   util.initResponder();
+  util.pushMessage(line, [
+    {
+      type: "text",
+      text: '[AUTO] チャットが終了しました。'
+    }
+  ]);
 }
 function onChasitorSessionData() {}
 function onChatEnded() {
   util.initSession();
   util.initResponder();
+  util.pushMessage(line, [
+    {
+      type: "text",
+      text: '[自動送信] チャットが終了しました。'
+    }
+  ]);
 }
 function onChatEstablished() {}
 function onChatRequestFail() {
-util.initSession();
+　util.initSession();
   util.initResponder();
-
 }
 function onChatRequestSuccess() {}
 function onChatTransferred() {}
@@ -252,43 +271,55 @@ function onFileTransfer(message) {
     var session = util.getSession();
     session.file = message.message;
     util.setSession(session);
+    util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信] オペレータが画像ファイル1枚の送信を許可しました。画像ファイル意外のファイルを送信しないでください。'
+    }
+    ]);
+
   } else if (message.message.type === 'Canceled') {
     var session = util.getSession();
     session.file = null;
     util.setSession(session);
+    util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信] オペレータがファイル送信の許可を取り消しました。'
+    }
+    ]);
   }
 }
   
 function onAvailability() {}
 
+
+
+
+
+
+
+
+// LINE からのイベントを処理する
 exports.onEventRecieved = function(event) {
-  var line = util.getLineConnection();
-  var liveagent = util.getLiveagentConnection();
   switch (event.type) {
     case "message":
       switch (event.message.type) {
         case "text":
-          sendMessage(liveagent, event.message.text);
+          onText(event)
           break;
         case "image":
-          util.getContent(line, event.message, function(content) {
-            uploadFile(liveagent, content);
-          });
-
+          onImage(event)
           break;
         case "video":
-          util.getContent(line, event.message, function(content) {
-            uploadFile(liveagent, content);
-          });
+          onVideo(event)
           break;
         case "audio":
-          util.getContent(line, event.message, function(content) {
-            uploadFile(liveagent, content);
-          });
+          onAudio(event)
           break;
         case "location":
+          onLocation(event)
           break;
         case "sticker":
+          onSticker(event)
           break;
         default:
           break;
@@ -311,7 +342,70 @@ exports.onEventRecieved = function(event) {
   }
 };
 
-function sendMessage(liveagent, text) {
+
+function onText(event) {
+  sendMessage(event.message.text);
+}
+
+function onImage(event) {
+  var session = util.getSession();
+  var line = util.getLineConnection();
+  if (session.file) {
+    util.getContent(line, event.message, function(content) {
+      uploadFile(content);
+    });
+  } else {
+    sendMessage('[自動送信]ユーザーが画像の送信を試みました');
+    util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信] 現在ファイル送信は許可されていません。オペレータの許可を待ってもう一度お試しください。'
+    }]);
+  }
+}
+
+function onVideo(event) {
+  var line = util.getLineConnection();
+  util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信] 動画の送信には対応しておりません。申し訳ございません。'
+    }]);
+  sendMessage('[自動送信]ユーザーが動画の送信を試みました');
+}
+
+function onAudio(event) {
+  var line = util.getLineConnection();
+  util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信] 音声の送信には対応しておりません。申し訳ございません。'
+  }]);
+  sendMessage('[自動送信]ユーザーが音声の送信を試みました');
+}
+
+function onLocation(event) {
+  sendMessage('[自動送信]ユーザーが位置情報を共有しました');
+  sendMessage(event.message.address);
+  sendMessage('(' + event.message.latitude + ',' +  event.message.longitude);
+}
+
+function onSticker(event) {
+  sendMessage('[自動送信]ユーザーがスティッカーを送信しました');
+}
+
+function onFollow(event) {}
+
+function onUnfollow(event) {}
+
+function onJoin(event) {}
+
+function onLeave(event) {}
+
+function onPostback(event) {}
+
+
+
+
+function sendMessage(text) {
+  var liveagent = util.getLiveagentConnection();
   var session = util.getSession();
   var request = require("request");
   var options = {
@@ -337,7 +431,7 @@ function sendMessage(liveagent, text) {
   });
 }
 
-function uploadFile(options, content) {
+function uploadFile(content) {
   var session = util.getSession();
   var liveagent = util.getLiveagentConnection();
   var request = require("request");
@@ -363,9 +457,6 @@ function uploadFile(options, content) {
       }
     }
   };
-
-//cosnole.log(content.data);
-
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
@@ -373,20 +464,49 @@ function uploadFile(options, content) {
     }
     console.log('File Uploaded!');
   });
-/*
-  var form = req.form();
-  form.append('file', fs.createReadStream('../public/liveagent_invite.png'), {
-    filename: "attachment.jpg",
-    contentType: content.type
-  });
-  */
-
 }
 
 
 
+
+
+
+// エラーハンドラー
+function onCreateLiveAgentSessionFailed(error, body) {
+  handleError(error, body)
+  util.initSession();
+  util.initResponder();
+  var line = util.getLineConnection();
+  util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信]オペレータとのチャットの開始に失敗しました。チャットを中断します。対応可能なエージェントがいるか確認してください。'
+    }
+  ]);
+}
+function onCreateChatVisitorSessionFailed(error, body) {
+  handleError(error, body)
+  util.initResponder();
+  var line = util.getLineConnection();
+  util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信]訪問者の登録に失敗しました。チャットを中断します。'
+    }
+  ]);
+}
+function onMonitorChatActivityFailed(error, body) {
+  handleError(error, body)
+  util.initSession();
+  util.initResponder();
+  var line = util.getLineConnection();
+  util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信]チャットの接続が困難な状態になりました。チャットを中断します。'
+    }
+  ]);
+}
+
 function handleError(error, body) {
-  console.log(error);
+  console.error(error);
   if (body && body.details && body.details.length > 0) {
     console.error(body.message);
     body.details.forEach(function(detail) {

@@ -2,23 +2,21 @@ var bot = require("../libs/bot");
 var liveagent = require("../libs/liveagent");
 var util = require("../libs/utilities");
 
+
+// LINE からのリクエストを発信したユーザーの情報を取得する
 exports.processRequest = function(req) {
   req.body.events.forEach(function(event) {
     var line = util.getLineConnection();
-    
-    if (!line.user) {
-      var userId = event.source.userId || event.source.groupId || event.source.roomId;
-      util.getUserProfile(line, userId, function(user) {
-        line.user = user;
-        util.setLineConnection(line);
-        routeEvent(event);
-      });
-    } else {
+    var userId = event.source.userId || event.source.groupId || event.source.roomId;
+    util.getUserProfile(line, userId, function(user) {
+      line.user = user;
+      util.setLineConnection(line);
       routeEvent(event);
-    }
+    });
   });
 };
 
+// 現在の対応者(BOT or オペレータ)を取得し、イベントを渡す。
 function routeEvent(event) {
   var responder = util.getResponder();
   switch (responder.name) {
@@ -33,6 +31,8 @@ function routeEvent(event) {
   }
 }
 
+// BOT にイベントを渡す。
+// Liveagent 開始の Postback であった場合は、Liveagent Session を開始する
 function routeEventToBot(event) {
   bot.onEventRecieved(event);
   if (event.type === "postback") {
@@ -43,6 +43,7 @@ function routeEventToBot(event) {
   }
 }
 
+// オペレータにイベントを渡す
 function routeEventToLiveagent(event) {
   liveagent.onEventRecieved(event);
 }
@@ -55,40 +56,3 @@ function handleError(error, body) {
     });
   }
 }
-
-/*
-transaction = {
-  line: {
-    channelId: String,
-    secret: String,
-    token: String,
-    user: {
-      id: String,
-      name: String,
-      imageUrl: String
-    },
-    event: {
-      type: String
-    }
-  },
-  liveagent: {
-    laPod: String,
-    orgId: String,
-    deploymentId: String,
-    buttonId: String,
-    session: {
-      sessionId: String,
-      sessionKey: String,
-      affinity: String,
-      sequence: Number,
-      ack: Number
-    },
-    file: {
-      uploadServletUrl: String,
-      fileToken: String,
-      cdmServletUrl: String
-    }
-  },
-  transcripts: []
-}
-*/
