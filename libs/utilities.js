@@ -173,11 +173,19 @@ exports.getContent = function(line, message, callback) {
       Authorization: "Bearer {" + line.token + "}",
     }
   };
+
+
   request.get(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
       return;
     }
+
+    var fs = require("fs");
+  fs.writeFile('../public/tmp.jpeg', body, 'binary', function(err){
+          if (err) throw err
+          console.log('File saved.')
+      })
 
     var base64data = new Buffer(body, 'binary').toString('base64');
     var content = {
