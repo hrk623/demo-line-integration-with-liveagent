@@ -373,21 +373,15 @@ function uploadFile(options, content) {
     console.log('File Uploaded!');
   });
  var form = req.form();
-form.append('file', toBuffer(content.data), {
+form.append('file', content.data, {
   filename: "attachment.jpg",
   contentType: content.type
 });
 
+console.log(content.data);
+
 }
 
-function toBuffer(ab) {
-  var buffer = new Buffer(ab.byteLength);
-  var view = new Uint8Array(ab);
-  for (var i = 0; i < buffer.length; ++i) {
-    buffer[i] = view[i];
-  }
-  return buffer;
-}
 
 
 function handleError(error, body) {
