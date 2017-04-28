@@ -231,6 +231,7 @@ function onAgentNotTyping() {}
 function onAgentDisconnect() {
   util.initSession();
   util.initResponder();
+  var line = util.getLineConnection();
   util.pushMessage(line, [
     {
       type: "text",
@@ -242,6 +243,7 @@ function onChasitorSessionData() {}
 function onChatEnded() {
   util.initSession();
   util.initResponder();
+  var line = util.getLineConnection();
   util.pushMessage(line, [
     {
       type: "text",

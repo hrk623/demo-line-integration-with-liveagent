@@ -167,7 +167,7 @@ function onPostback(line, event) {
       if (params.action === 'start') {
         messages = [{
           type: 'text',
-          text: 'オペレーターを呼び出します。'
+          text: 'オペレーターにお繋ぎしています。しばらくお待ち下さい。'
         }];
         util.replyMessage(line, event, messages);
       }
