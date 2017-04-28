@@ -175,7 +175,7 @@ exports.getContent = function(line, message, callback) {
     }
   };
 
-
+var https = require('https');
 
 req = https.request(options, function(res) {
     res.setEncoding('binary');
