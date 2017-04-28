@@ -352,7 +352,7 @@ function uploadFile(options, content) {
     headers: {
       Referer: session.file.cdmServletUrl,
       "User-Agent": USER_AGENT
-    },
+    },/*
     formData: {
       filename: "attachment.jpg",
       file: {
@@ -362,7 +362,7 @@ function uploadFile(options, content) {
           contentType: content.type
         }
       }
-    }
+    }*/
   };
   var req = request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
@@ -371,14 +371,13 @@ function uploadFile(options, content) {
     }
     console.log('File Uploaded!');
   });
-  /*
+  
  var form = req.form();
 form.append('file', content.data, {
   filename: "attachment.jpg",
   contentType: content.type
-});*/
-console.log(options.url);
-console.log(options.headers);
+});
+cosnole.log(content.data);
 
 }
 
