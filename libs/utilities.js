@@ -180,11 +180,10 @@ exports.getContent = function(line, message, callback) {
     }
 
     var base64data = new Buffer(body, 'binary').toString('base64');
-console.log(base64data);
     var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
-      data: body
+      data: base64data
     };
     callback(content);
   });
