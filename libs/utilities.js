@@ -185,7 +185,7 @@ exports.getContent = function(line, message, callback) {
   fs.writeFile('../public/tmp.jpeg', body, 'binary', function(err){
           if (err) throw err
           console.log('File saved.')
-      })
+      });
 
     var base64data = new Buffer(body, 'binary').toString('base64');
     var content = {
