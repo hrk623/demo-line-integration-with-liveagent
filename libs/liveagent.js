@@ -355,7 +355,7 @@ var fs = require("fs");
     },
     formData: {
       filename: "attachment.jpg",
-      file: fs.createReadStream(__dirname + '/liveagent_invite.png')/*{
+      file: content.data/*fs.createReadStream(__dirname + '/liveagent_invite.png')/*{
         value: content.data,
         options: {
           filename: "attachment.jpg",

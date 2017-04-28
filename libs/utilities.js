@@ -179,11 +179,11 @@ exports.getContent = function(line, message, callback) {
       return;
     }
 
-    var base64data = new Buffer(body, 'binary').toString('base64');
+    //var base64data = new Buffer(body, 'binary').toString('base64');
     var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
-      data: base64data
+      data: body
     };
     callback(content);
   });
