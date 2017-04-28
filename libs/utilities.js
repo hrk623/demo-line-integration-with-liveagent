@@ -175,16 +175,24 @@ exports.getContent = function(line, message, callback) {
     }
   };
 
-
+  var data = [ ];
   request(options, function (error, response, body) {
       // body is the decompressed response body 
       //console.log('server encoded the data as: ' + (response.headers['content-encoding'] || 'identity'))
       //console.log('the decoded data is: ')
        console.log('callback');
+       fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
+if(err) {
+ console.log(err);
+ return;
+}
+console.log('成功');
+});
     }
-  ).on('data', function(data) {
+  ).on('data', function(chunk) {
     // decompressed data as it is received 
     console.log('ondata');
+    data.push(chunk);
   })
   .on('response', function(response) {
     // unmodified http.IncomingMessage object 
