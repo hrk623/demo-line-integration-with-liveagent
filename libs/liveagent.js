@@ -346,9 +346,6 @@ function uploadFile(options, content) {
   query += "&fileToken=" + session.file.fileToken;
   query += "&encoding=UTF-8";
 
-var fs = require("fs");
-console.log(fs.createReadStream(__dirname + '/liveagent_invite.png'));
-
   var options = {
     url: session.file.uploadServletUrl + query,
     headers: {
@@ -357,19 +354,19 @@ console.log(fs.createReadStream(__dirname + '/liveagent_invite.png'));
     },
     formData: {
       filename: "attachment.jpg",
-      file: content.data/*fs.createReadStream(__dirname + '/liveagent_invite.png')/*{
+      file: {
         value: content.data,
         options: {
           filename: "attachment.jpg",
           contentType: content.type
         }
-      }*/
+      }
     }
   };
 
 //cosnole.log(content.data);
 
-  var req = request.post(options, function(error, response, body) {
+  request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
       return;
