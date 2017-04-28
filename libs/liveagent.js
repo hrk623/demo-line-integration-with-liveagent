@@ -365,7 +365,7 @@ function uploadFile(options, content) {
   };
 
 cosnole.log(content.data);
-  
+/*
   var req = request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
@@ -379,7 +379,7 @@ cosnole.log(content.data);
     contentType: content.type
   });
   
-
+*/
 }
 
 
