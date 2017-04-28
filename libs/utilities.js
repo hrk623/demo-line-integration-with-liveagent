@@ -175,13 +175,13 @@ exports.getContent = function(line, message, callback) {
     }
   };
 
-
-  request.get(options, function(error, res, body) {
-    let buffers = [];
-res.on('data', (chunk) => {
+let buffers = [];
+  request.get(options, function(error, response, body) {
+    
+response.on('data', (chunk) => {
  buffers.push(chunk);
 });
-res.on('end', () => {
+response.on('end', () => {
  fs.writeFile('./public/tmp.jpeg', Buffer.concat(buffers), 'utf-8', (err) => {
   if(err) {
    console.log(err);
