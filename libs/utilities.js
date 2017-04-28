@@ -181,7 +181,7 @@ exports.getContent = function(line, message, callback) {
       return;
     }
 
-    console.log(response);
+    console.log(response.a);
 
     var base64data = new Buffer(body, 'binary').toString('base64');
     var fs = require("fs");
