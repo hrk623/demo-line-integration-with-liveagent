@@ -181,6 +181,7 @@ exports.getContent = function(line, message, callback) {
       //console.log('server encoded the data as: ' + (response.headers['content-encoding'] || 'identity'))
       //console.log('the decoded data is: ')
        console.log('callback');
+       var fs = require("fs");
        fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
 if(err) {
  console.log(err);
