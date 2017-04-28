@@ -178,6 +178,9 @@ exports.getContent = function(line, message, callback) {
       handleError(error, body);
       return;
     }
+
+    var base64data = new Buffer(body, 'binary').toString('base64');
+console.log(base64data);
     var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],

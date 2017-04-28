@@ -351,7 +351,7 @@ function uploadFile(options, content) {
     headers: {
       Referer: session.file.cdmServletUrl,
       "User-Agent": USER_AGENT
-    },/*
+    },
     formData: {
       filename: "attachment.jpg",
       file: {
@@ -361,7 +361,7 @@ function uploadFile(options, content) {
           contentType: content.type
         }
       }
-    }*/
+    }
   };
 
 //cosnole.log(content.data);
@@ -373,13 +373,13 @@ var fs = require("fs");
     }
     console.log('File Uploaded!');
   });
-
+/*
   var form = req.form();
   form.append('file', fs.createReadStream('../public/liveagent_invite.png'), {
     filename: "attachment.jpg",
     contentType: content.type
   });
-  
+  */
 
 }
 
