@@ -130,10 +130,10 @@ function onAudio(line, event) {
 function onLocation(line, event) {
   var messages = [{
     type: 'text',
-    text: event.message.address + 'にいるんだね！'
+    text: event.message.address + ' ですね。'
   }, {
     type: 'text',
-    text: 'ボクはここにいるよ！'
+    text: '弊社の所在はこちらになります。'
   }, {
     type: 'location',
     title: '現在地',
@@ -147,7 +147,7 @@ function onLocation(line, event) {
 function onSticker(line, event) {
   var messages = [{
     type: 'text',
-    text: '良いスタンプだね！'
+    text: '良いスタンプですね！'
   }];
   util.replyMessage(line, event, messages);
 }

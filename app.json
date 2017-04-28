@@ -1,0 +1,40 @@
+{
+  "name": "LINE Integration Sample with Salesforce Liveagent Chat",
+  "description": "Line の Messaging API と Liveagent チャットをつなぐ Heroku のサンプルアプリです。複数ユーザーの同時接続は出来ません。",
+  "repository": "https://github.com/hrk623/demo-line-integration-with-liveagent.git",
+  "addons": ["fixie:tricycle"],
+  "env": {
+    "LINE_CHANNEL_ACCESS_TOKEN": {
+            "description": "LINE - Channel Access Token",
+            "value": ""
+    },
+    "LINE_CHANNEL_ID": {
+            "description": "LINE - Channel ID",
+            "value": ""
+    },
+    "LINE_CHANNEL_SECRET": {
+            "description": "LINE - Channel Secret",
+            "value": ""
+    },
+    "LIVEAGENT_API_VERSION": {
+            "description": "Salesforce - Liveagent Rest API のバージョン",
+            "value": "39"
+    },
+    "LIVEAGENT_BUTTON_ID": {
+            "description": "Salesforce - Liveagent Chat のボタン ID",
+            "value": ""
+    },
+    "LIVEAGENT_DEPLOYMENT_ID": {
+            "description": "Salesforce - Liveagent Chat のリリース ID",
+            "value": ""
+    },
+    "LIVEAGENT_ORGANIZATION_ID": {
+            "description": "Salesforce - Liveagent Chat の組織 ID",
+            "value": ""
+    },
+    "LIVEAGENT_POD": {
+            "description": "Salesforce - Liveagent API のエンドポイント(ホストのみ)",
+            "value": "例: d.la.gus.salesforce.com"
+    },
+  },
+}

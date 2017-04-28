@@ -154,7 +154,6 @@ function monitorChatActivity() {
       session.ack = body.sequence;
       util.setSession(session);  
       body.messages.forEach(function(message) {
-        console.log(message);
         monitorChatActivity();
         processMessage(message);
       });

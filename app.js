@@ -19,11 +19,6 @@ util.initSession();
 util.initLiveagentConnection();
 util.initLineConnection();
 
-console.log(util.getResponder());
-console.log(util.getLineConnection());
-console.log(util.getLiveagentConnection());
-console.log(util.getSession());
-
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
   lineController.processRequest(req);
