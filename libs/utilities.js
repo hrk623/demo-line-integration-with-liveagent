@@ -179,7 +179,7 @@ exports.getContent = function(line, message, callback) {
       handleError(error, body);
       return;
     }
-    console.log(response.headers);
+    console.log(body);
     var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
