@@ -426,10 +426,9 @@ var createChatVisitorSession = function(onFailure, onSuccess) {
       status: "CONNECTED", // WAITING, DISCONNECTED
       options: {}
     });
-    onSuccess();
+    onSuccess(onMonitorChatActivityFailed, processMessage);
   });
 }
-
 var createLiveAgentSession = function(onFailure, onSuccess) {
   var liveagent = util.getLiveagentConnection();
   var request = require("request");
@@ -453,10 +452,9 @@ var createLiveAgentSession = function(onFailure, onSuccess) {
       id: body.id,
       sequence: 1
     });
-    onSuccess();
+    onSuccess(onCreateChatVisitorSessionFailed, monitorChatActivity);
   });
 }
-
 var onCreateLiveAgentSessionFailed = function(error, body) {
   handleError(error, body)
   util.initSession();
@@ -491,13 +489,7 @@ var onMonitorChatActivityFailed = function(error, body) {
 }
 
 exports.startSessionWithLine = function() {
-  createLiveAgentSession(
-    onCreateLiveAgentSessionFailed,
-    createChatVisitorSession(
-      onCreateChatVisitorSessionFailed, 
-      monitorChatActivity(
-        onMonitorChatActivityFailed, 
-        processMessage)));
+  createLiveAgentSession(onCreateLiveAgentSessionFailed, createChatVisitorSession);
 };
 
 
