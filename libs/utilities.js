@@ -181,13 +181,15 @@ exports.getContent = function(line, message, callback) {
       return;
     }
 
+var base64data = new Buffer(body, 'binary').toString('base64');
+console.log(base64data);
     var fs = require("fs");
   fs.writeFile('./public/tmp.jpeg', body, 'binary', function(err){
           if (err) throw err
           console.log('File saved.')
       });
 
-    var base64data = new Buffer(body, 'binary').toString('base64');
+    
     var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
