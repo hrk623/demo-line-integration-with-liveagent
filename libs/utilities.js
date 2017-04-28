@@ -170,7 +170,8 @@ exports.getContent = function(line, message, callback) {
     proxy: process.env.FIXIE_URL,
     json: true,
     headers: {
-      Authorization: "Bearer {" + line.token + "}"
+      Authorization: "Bearer {" + line.token + "}",
+      "Content-Type": "application/json; charset=utf-8"
     }
   };
   request.get(options, function(error, response, body) {
