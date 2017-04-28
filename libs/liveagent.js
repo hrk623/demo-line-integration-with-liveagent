@@ -373,9 +373,9 @@ var fs = require("fs");
     }
     console.log('File Uploaded!');
   });
-  
+
   var form = req.form();
-  form.append('file', fs.createReadStream(../public/liveagent_invite.png), {
+  form.append('file', fs.createReadStream('../public/liveagent_invite.png'), {
     filename: "attachment.jpg",
     contentType: content.type
   });
