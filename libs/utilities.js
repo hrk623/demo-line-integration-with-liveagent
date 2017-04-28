@@ -174,7 +174,7 @@ exports.getContent = function(line, message, callback) {
       "Content-type": "application/json; charset=UTF-8",
     }
   };
-
+/*
 var https = require('https');
 
 req = https.request(options, function(res) {
@@ -199,42 +199,38 @@ console.log('成功');
         console.log(err.message);
     });
 });
+*/
 
 
-/*
 
-let buffers = [];
   request.get(options, function(error, response, body) {
-    
-response.on('data', (chunk) => {
- buffers.push(chunk);
-});
-response.on('end', () => {
- fs.writeFile('./public/tmp.jpeg', Buffer.concat(buffers), 'utf-8', (err) => {
-  if(err) {
-   console.log(err);
-   return;
-  }
-  console.log('成功');
- });
-});
 
     if (error || response.statusCode != 200) {
       handleError(error, body);
       return;
     }
 
-    var base64data = new Buffer(body, 'binary').toString('base64');
     
-    
-    var content = {
+  }).on('data', function(data) {
+    // decompressed data as it is received 
+    console.log('decoded chunk: ' + data)
+  })
+  .on('response', function(response) {
+    // unmodified http.IncomingMessage object 
+    response.on('data', function(data) {
+      // compressed data as it is received 
+      console.log('received ' + data.length + ' bytes of compressed data')
+    })
+   var base64data = new Buffer(body, 'binary').toString('base64');
+   var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
       data: base64data
     };
     callback(content);
+
   });
-  */
+  
 };
 
 exports.parseQuery = function(str) {
