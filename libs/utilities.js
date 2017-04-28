@@ -182,7 +182,7 @@ exports.getContent = function(line, message, callback) {
     }
 
     var fs = require("fs");
-  fs.writeFile('../public/tmp.jpeg', body, 'binary', function(err){
+  fs.writeFile('./public/tmp.jpeg', body, 'binary', function(err){
           if (err) throw err
           console.log('File saved.')
       });
