@@ -6,15 +6,15 @@
   "env": {
     "LINE_CHANNEL_ACCESS_TOKEN": {
             "description": "LINE - Channel Access Token",
-            "value": ""
+            "value": "Change This Value"
     },
     "LINE_CHANNEL_ID": {
             "description": "LINE - Channel ID",
-            "value": ""
+            "value": "Change This Value"
     },
     "LINE_CHANNEL_SECRET": {
             "description": "LINE - Channel Secret",
-            "value": ""
+            "value": "Change This Value"
     },
     "LIVEAGENT_API_VERSION": {
             "description": "Salesforce - Liveagent Rest API のバージョン",
@@ -22,19 +22,19 @@
     },
     "LIVEAGENT_BUTTON_ID": {
             "description": "Salesforce - Liveagent Chat のボタン ID",
-            "value": ""
+            "value": "Change This Value"
     },
     "LIVEAGENT_DEPLOYMENT_ID": {
             "description": "Salesforce - Liveagent Chat のリリース ID",
-            "value": ""
+            "value": "Change This Value"
     },
     "LIVEAGENT_ORGANIZATION_ID": {
             "description": "Salesforce - Liveagent Chat の組織 ID",
-            "value": ""
+            "value": "Change This Value"
     },
     "LIVEAGENT_POD": {
             "description": "Salesforce - Liveagent API のエンドポイント(ホストのみ)",
-            "value": "例: d.la.gus.salesforce.com"
+            "value": "Change This Value"
     },
   },
 }
