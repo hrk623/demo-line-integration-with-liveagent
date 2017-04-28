@@ -175,6 +175,29 @@ exports.getContent = function(line, message, callback) {
     }
   };
 
+
+
+req = https.request(options, function(res) {
+    res.setEncoding('binary');
+
+    var data = [ ];
+
+    res.on('data', function(chunk) {
+        data.push(chunk);
+    });
+    res.on('end', function() {
+        var binary = Buffer.concat(data);
+        // binary is your data
+    });
+    res.on('error', function(err) {
+        console.log("Error during HTTP request");
+        console.log(err.message);
+    });
+});
+
+
+/*
+
 let buffers = [];
   request.get(options, function(error, response, body) {
     
@@ -206,6 +229,7 @@ response.on('end', () => {
     };
     callback(content);
   });
+  */
 };
 
 exports.parseQuery = function(str) {
