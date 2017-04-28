@@ -174,6 +174,30 @@ exports.getContent = function(line, message, callback) {
       "Content-type": "application/json; charset=UTF-8",
     }
   };
+
+
+  request(options, function (error, response, body) {
+      // body is the decompressed response body 
+      console.log('server encoded the data as: ' + (response.headers['content-encoding'] || 'identity'))
+      console.log('the decoded data is: ' + body)
+    }
+  ).on('data', function(data) {
+    // decompressed data as it is received 
+    console.log('decoded chunk: ' + data)
+  })
+  .on('response', function(response) {
+    // unmodified http.IncomingMessage object 
+    response.on('data', function(data) {
+      // compressed data as it is received 
+      console.log('received ' + data.length + ' bytes of compressed data')
+    })
+  })
+
+
+
+
+
+
 /*
 var https = require('https');
 
@@ -202,7 +226,7 @@ console.log('成功');
 */
 
 
-
+/*
   request.get(options, function(error, response, body) {
 
     if (error || response.statusCode != 200) {
@@ -210,7 +234,6 @@ console.log('成功');
       return;
     }
 
-    
   }).on('data', function(data) {
     // decompressed data as it is received 
     console.log('decoded chunk: ' + data)
@@ -230,7 +253,7 @@ console.log('成功');
     callback(content);
 
   });
-  
+  */
 };
 
 exports.parseQuery = function(str) {
