@@ -186,8 +186,13 @@ req = https.request(options, function(res) {
         data.push(chunk);
     });
     res.on('end', function() {
-        var binary = Buffer.concat(data);
-        // binary is your data
+      fs.writeFile('./public/tmp.jpeg', Buffer.concat(buffers), 'utf-8', (err) => {
+if(err) {
+ console.log(err);
+ return;
+}
+console.log('成功');
+});
     });
     res.on('error', function(err) {
         console.log("Error during HTTP request");
