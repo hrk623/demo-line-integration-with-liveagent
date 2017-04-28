@@ -184,15 +184,13 @@ exports.getContent = function(line, message, callback) {
       length: response.headers["content-length"],
       data: Buffer.concat(data)
     };
-    callback(content);
-    /*
-          var fs = require("fs");
-          fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
-            if(err) {
-             console.log(err);
-             return;
-           }
-           */
+    var fs = require("fs");
+      fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+    callback(content);      
   }).on('data', function(chunk) {
     data.push(chunk);
   });

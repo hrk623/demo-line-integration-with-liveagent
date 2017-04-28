@@ -267,7 +267,7 @@ function onFileTransfer(message) {
     util.setSession(session);
     util.pushMessage(line, [{
       type: "text",
-      text: '[自動送信] オペレータが画像ファイル1枚の送信を許可しました。画像ファイル意外のファイルを送信しないでください。'
+      text: '[自動送信] オペレータが画像ファイル1枚の送信を許可しました。'
     }
     ]);
 
@@ -441,11 +441,11 @@ function uploadFile(content) {
       "User-Agent": USER_AGENT
     },
     formData: {
-      filename: "attachment.jpg",
+      filename: "attachment.jpeg",
       file: {
         value: content.data,
         options: {
-          filename: "attachment.jpg",
+          filename: "attachment.jpeg",
           contentType: content.type
         }
       }
@@ -453,10 +453,14 @@ function uploadFile(content) {
   };
   request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
-      handleError(error, body);
+      onUploadFileFailed(error, body);
       return;
     }
-    console.log('File Uploaded!');
+    var line = util.getLineConnection();
+    util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信]ファイルが送信されました。'
+    }]);
   });
 }
 
@@ -466,6 +470,18 @@ function uploadFile(content) {
 
 
 // エラーハンドラー
+function onUploadFileFailed(error, body) {
+  handleError(error, body)
+  var session = util.getSession();
+  session.file = null;
+  util.setSession(session);
+  var line = util.getLineConnection();
+  util.pushMessage(line, [{
+      type: "text",
+      text: '[自動送信]ファイルの送信に失敗しました。'
+    }
+  ]);
+}
 function onCreateLiveAgentSessionFailed(error, body) {
   handleError(error, body)
   util.initSession();

@@ -64,7 +64,7 @@ function onText(line, event) {
     key: /./,
     messages: [{
       type: 'text',
-      text: 'すみません。なんと仰ったのか分かりませんでした。'
+      text: 'すみません。よく分かりませんでした。'
     }, {
       type: 'template',
       altText: 'オペレータとチャットしますか？',
