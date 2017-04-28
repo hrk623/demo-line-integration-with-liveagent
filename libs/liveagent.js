@@ -4,6 +4,166 @@ var USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 var API_VERSION = process.env.LIVEAGENT_API_VERSION || 39;
 
+
+// Liveagent チャットを開始する
+// 1. Session key を取得
+// 2. 訪問者を登録
+// 3. イベントの監視をスタート
+exports.startSessionWithLine = function() {
+  createLiveAgentSession();
+};
+
+function createLiveAgentSession() {
+  var liveagent = util.getLiveagentConnection();
+  var request = require("request");
+  var options = {
+    url: "https://" + liveagent.laPod + "/chat/rest/System/SessionId",
+    headers: {
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-AFFINITY": "null",
+      Connection: "keep-alive"
+    },
+    json: true
+  };
+  request.get(options, function(error, response, body) {
+    if (error || response.statusCode != 200) {
+      onCreateLiveAgentSessionFailed(error, body);
+      return;
+    }
+    util.setSession({
+      key: body.key,
+      affinity: body.affinityToken,
+      id: body.id,
+      sequence: 1
+    });
+    createChatVisitorSession();
+  });
+}
+
+
+
+function createChatVisitorSession() {
+  var session = util.getSession();
+  var liveagent = util.getLiveagentConnection();
+  var line = util.getLineConnection();
+
+  var request = require("request");
+  var options = {
+    url: "https://" + liveagent.laPod + "/chat/rest/Chasitor/ChasitorInit",
+    headers: {
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-SESSION-KEY": session.key,
+      "X-LIVEAGENT-SEQUENCE": session.sequence,
+      "X-LIVEAGENT-AFFINITY": session.affinity
+    },
+    json: true,
+    body: {
+      organizationId: liveagent.orgId,
+      deploymentId: liveagent.deploymentId,
+      buttonId: liveagent.buttonId,
+      sessionId: session.id,
+      trackingId: "",
+      userAgent: USER_AGENT,
+      language: "ja",
+      screenResolution: "750x1334",
+      visitorName: line.user.displayName,
+      prechatDetails: [
+        {
+          label: "ContactLineId",
+          value: line.user.id,
+          entityMaps: [],
+          transcriptFields: [],
+          displayToAgent: true,
+          doKnowledgeSearch: false
+        },
+        {
+          label: "ContactLastName",
+          value: line.user.name,
+          entityMaps: [],
+          transcriptFields: [],
+          displayToAgent: true,
+          doKnowledgeSearch: false
+        }
+      ],
+      buttonOverrides: [],
+      receiveQueueUpdates: true,
+      prechatEntities: [
+        {
+          entityName: "Contact",
+          showOnCreate: true,
+          linkToEntityName: null,
+          linkToEntityField: null,
+          saveToTranscript: "ContactId",
+          entityFieldsMaps: [
+            {
+              fieldName: "LastName",
+              label: "ContactLastName",
+              doFind: false,
+              isExactMatch: false,
+              doCreate: true
+            },
+            {
+              fieldName: "LineId__c",
+              label: "ContactLineId",
+              doFind: true,
+              isExactMatch: true,
+              doCreate: true
+            }
+          ]
+        }
+      ],
+      isPost: true
+    }
+  };
+
+  request.post(options, function(error, response, body) {
+    if (error || response.statusCode != 200) {
+      onCreateChatVisitorSessionFailed(error, body);
+      return;
+    }
+    session.sequence++;
+    util.setSession(session);
+    util.setResponder({
+      name: "LIVEAGENT", // LIVEAGENT
+      status: "CONNECTED", // WAITING, DISCONNECTED
+      options: {}
+    });
+    monitorChatActivity();
+  });
+}
+
+function monitorChatActivity() {
+  var liveagent = util.getLiveagentConnection();
+  var session = util.getSession();
+  session.ack = session.ack === undefined ? -1 : session.ack;
+  var request = require("request");
+  var options = {
+    url: "https://" + liveagent.laPod + "/chat/rest/System/Messages",
+    qs: {　ack: session.ack　},
+    headers: {
+      "X-LIVEAGENT-API-VERSION": API_VERSION,
+      "X-LIVEAGENT-SESSION-KEY": session.key,
+      "X-LIVEAGENT-AFFINITY": session.affinity
+    },
+    json: true
+  };
+  request.get(options, function(error, response, body) {
+    if (response.statusCode == 204) {
+      processMessage();
+    } else if (response.statusCode == 200) {
+      session.ack = body.sequence;
+      util.setSession(session);  
+      body.messages.forEach(function(message) {
+        console.log(message);
+        monitorChatActivity();
+        processMessage(message);
+      });
+    } else {
+      onMonitorChatActivityFailed(error, body);
+    }
+  });
+}
+
 function processMessage(message) {
   switch (message.type) {
     case "ChatMessage":
@@ -303,159 +463,10 @@ function uploadFile(content) {
 
 
 
-// Liveagent チャットを開始する
-// 1. Session key を取得
-// 2. 訪問者を登録
-// 3. イベントの監視をスタート
 
-var monitorChatActivity = function(onFailure, onMessageRecieved) {
-  var liveagent = util.getLiveagentConnection();
-  var session = util.getSession();
-  session.ack = session.ack === undefined ? -1 : session.ack;
-  var request = require("request");
-  var options = {
-    url: "https://" + liveagent.laPod + "/chat/rest/System/Messages",
-    qs: {　ack: session.ack　},
-    headers: {
-      "X-LIVEAGENT-API-VERSION": API_VERSION,
-      "X-LIVEAGENT-SESSION-KEY": session.key,
-      "X-LIVEAGENT-AFFINITY": session.affinity
-    },
-    json: true
-  };
-  request.get(options, function(error, response, body) {
-    if (response.statusCode == 204) {
-      monitorChatActivity();
-    } else if (response.statusCode == 200) {
-      session.ack = body.sequence;
-      util.setSession(session);  
-      body.messages.forEach(function(message) {
-        console.log(message);
-        monitorChatActivity();
-        onMessageRecieved(message);
-      });
-    } else {
-      onFailure(error, body);
-    }
-  });
-}
 
-var createChatVisitorSession = function(onFailure, onSuccess) {
-  var session = util.getSession();
-  var liveagent = util.getLiveagentConnection();
-  var line = util.getLineConnection();
-
-  var request = require("request");
-  var options = {
-    url: "https://" + liveagent.laPod + "/chat/rest/Chasitor/ChasitorInit",
-    headers: {
-      "X-LIVEAGENT-API-VERSION": API_VERSION,
-      "X-LIVEAGENT-SESSION-KEY": session.key,
-      "X-LIVEAGENT-SEQUENCE": session.sequence,
-      "X-LIVEAGENT-AFFINITY": session.affinity
-    },
-    json: true,
-    body: {
-      organizationId: liveagent.orgId,
-      deploymentId: liveagent.deploymentId,
-      buttonId: liveagent.buttonId,
-      sessionId: session.id,
-      trackingId: "",
-      userAgent: USER_AGENT,
-      language: "ja",
-      screenResolution: "750x1334",
-      visitorName: line.user.displayName,
-      prechatDetails: [
-        {
-          label: "ContactLineId",
-          value: line.user.id,
-          entityMaps: [],
-          transcriptFields: [],
-          displayToAgent: true,
-          doKnowledgeSearch: false
-        },
-        {
-          label: "ContactLastName",
-          value: line.user.name,
-          entityMaps: [],
-          transcriptFields: [],
-          displayToAgent: true,
-          doKnowledgeSearch: false
-        }
-      ],
-      buttonOverrides: [],
-      receiveQueueUpdates: true,
-      prechatEntities: [
-        {
-          entityName: "Contact",
-          showOnCreate: true,
-          linkToEntityName: null,
-          linkToEntityField: null,
-          saveToTranscript: "ContactId",
-          entityFieldsMaps: [
-            {
-              fieldName: "LastName",
-              label: "ContactLastName",
-              doFind: false,
-              isExactMatch: false,
-              doCreate: true
-            },
-            {
-              fieldName: "LineId__c",
-              label: "ContactLineId",
-              doFind: true,
-              isExactMatch: true,
-              doCreate: true
-            }
-          ]
-        }
-      ],
-      isPost: true
-    }
-  };
-
-  request.post(options, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      onFailure(error, body);
-      return;
-    }
-    session.sequence++;
-    util.setSession(session);
-    util.setResponder({
-      name: "LIVEAGENT", // LIVEAGENT
-      status: "CONNECTED", // WAITING, DISCONNECTED
-      options: {}
-    });
-    onSuccess(onMonitorChatActivityFailed, processMessage);
-  });
-}
-var createLiveAgentSession = function(onFailure, onSuccess) {
-  var liveagent = util.getLiveagentConnection();
-  var request = require("request");
-  var options = {
-    url: "https://" + liveagent.laPod + "/chat/rest/System/SessionId",
-    headers: {
-      "X-LIVEAGENT-API-VERSION": API_VERSION,
-      "X-LIVEAGENT-AFFINITY": "null",
-      Connection: "keep-alive"
-    },
-    json: true
-  };
-  request.get(options, function(error, response, body) {
-    if (error || response.statusCode != 200) {
-      onFailure(error, body);
-      return;
-    }
-    util.setSession({
-      key: body.key,
-      affinity: body.affinityToken,
-      id: body.id,
-      sequence: 1
-    });
-    onSuccess(onCreateChatVisitorSessionFailed, monitorChatActivity);
-  });
-}
-var onCreateLiveAgentSessionFailed = function(error, body) {
+// エラーハンドラー
+function onCreateLiveAgentSessionFailed(error, body) {
   handleError(error, body)
   util.initSession();
   util.initResponder();
@@ -466,7 +477,7 @@ var onCreateLiveAgentSessionFailed = function(error, body) {
     }
   ]);
 }
-var onCreateChatVisitorSessionFailed = function(error, body) {
+function onCreateChatVisitorSessionFailed(error, body) {
   handleError(error, body)
   util.initResponder();
   var line = util.getLineConnection();
@@ -476,7 +487,7 @@ var onCreateChatVisitorSessionFailed = function(error, body) {
     }
   ]);
 }
-var onMonitorChatActivityFailed = function(error, body) {
+function onMonitorChatActivityFailed(error, body) {
   handleError(error, body)
   util.initSession();
   util.initResponder();
@@ -487,14 +498,6 @@ var onMonitorChatActivityFailed = function(error, body) {
     }
   ]);
 }
-
-exports.startSessionWithLine = function() {
-  createLiveAgentSession(onCreateLiveAgentSessionFailed, createChatVisitorSession);
-};
-
-
-// エラーハンドラー
-
 
 function handleError(error, body) {
   console.error(error);
