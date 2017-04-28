@@ -127,7 +127,10 @@ exports.pushMessage = function(line, messageList) {
     proxy: process.env.FIXIE_URL,
     headers: headers,
     json: true,
-    body: { to: line.user.id, messages: messageList }
+    body: {
+      to: line.user.id,
+      messages: messageList
+    }
   };
 
   request.post(options, function(error, response, body) {
@@ -160,7 +163,6 @@ exports.getUserProfile = function(line, userId, callback) {
     };
     callback(user);
   });
-
 };
 
 exports.getContent = function(line, message, callback) {
@@ -175,89 +177,25 @@ exports.getContent = function(line, message, callback) {
     }
   };
 
-  var data = [ ];
-  request(options, function (error, response, body) {
-      var content = {
-        type: response.headers["content-type"],
-        length: response.headers["content-length"],
-        data: Buffer.concat(data)
-      };
-      callback(content);
-/*
-      var fs = require("fs");
-      fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
-        if(err) {
-         console.log(err);
-         return;
-       }
-       */
-     });
-    }
-    ).on('data', function(chunk) {
-    data.push(chunk);
-  });
-
-
-
-
-
-
-/*
-var https = require('https');
-
-req = https.request(options, function(res) {
-    res.setEncoding('binary');
-
-    var data = [ ];
-
-    res.on('data', function(chunk) {
-        data.push(chunk);
-    });
-    res.on('end', function() {
-      fs.writeFile('./public/tmp.jpeg', Buffer.concat(buffers), 'utf-8', (err) => {
-if(err) {
- console.log(err);
- return;
-}
-console.log('成功');
-});
-    });
-    res.on('error', function(err) {
-        console.log("Error during HTTP request");
-        console.log(err.message);
-    });
-});
-*/
-
-
-/*
-  request.get(options, function(error, response, body) {
-
-    if (error || response.statusCode != 200) {
-      handleError(error, body);
-      return;
-    }
-
-  }).on('data', function(data) {
-    // decompressed data as it is received 
-    console.log('decoded chunk: ' + data)
-  })
-  .on('response', function(response) {
-    // unmodified http.IncomingMessage object 
-    response.on('data', function(data) {
-      // compressed data as it is received 
-      console.log('received ' + data.length + ' bytes of compressed data')
-    })
-   var base64data = new Buffer(body, 'binary').toString('base64');
-   var content = {
+  var data = [];
+  request(options, function(error, response, body) {
+    var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
-      data: base64data
+      data: Buffer.concat(data)
     };
     callback(content);
-
+    /*
+          var fs = require("fs");
+          fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
+            if(err) {
+             console.log(err);
+             return;
+           }
+           */
+  }).on('data', function(chunk) {
+    data.push(chunk);
   });
-  */
 };
 
 exports.parseQuery = function(str) {
