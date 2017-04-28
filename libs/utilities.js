@@ -171,6 +171,7 @@ exports.getContent = function(line, message, callback) {
     json: true,
     headers: {
       Authorization: "Bearer {" + line.token + "}",
+      "Content-type": "application/json; charset=UTF-8",
     }
   };
 
@@ -180,8 +181,6 @@ exports.getContent = function(line, message, callback) {
       handleError(error, body);
       return;
     }
-
-    console.log(response.a);
 
     var base64data = new Buffer(body, 'binary').toString('base64');
     var fs = require("fs");
