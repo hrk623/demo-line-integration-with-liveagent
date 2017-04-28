@@ -347,6 +347,8 @@ function uploadFile(options, content) {
   query += "&encoding=UTF-8";
 
 var fs = require("fs");
+console.log(fs.createReadStream(__dirname + '/liveagent_invite.png'));
+
   var options = {
     url: session.file.uploadServletUrl + query,
     headers: {
