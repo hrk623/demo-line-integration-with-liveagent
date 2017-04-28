@@ -364,7 +364,6 @@ function uploadFile(options, content) {
       }
     }
   };
-  console.log('File Uploaded!');
   var req = request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
@@ -378,8 +377,8 @@ form.append('file', content.data, {
   filename: "attachment.jpg",
   contentType: content.type
 });*/
-
-console.log(content.data);
+console.log(options.url);
+console.log(options.headers);
 
 }
 
