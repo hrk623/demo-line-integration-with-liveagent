@@ -171,7 +171,6 @@ exports.getContent = function(line, message, callback) {
     json: true,
     headers: {
       Authorization: "Bearer {" + line.token + "}",
-      "Content-Type": "application/json; charset=utf-8"
     }
   };
   request.get(options, function(error, response, body) {
