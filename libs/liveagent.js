@@ -346,6 +346,7 @@ function uploadFile(options, content) {
   query += "&fileToken=" + session.file.fileToken;
   query += "&encoding=UTF-8";
 
+var fs = require("fs");
   var options = {
     url: session.file.uploadServletUrl + query,
     headers: {
@@ -354,18 +355,18 @@ function uploadFile(options, content) {
     },
     formData: {
       filename: "attachment.jpg",
-      file: {
+      file: fs.createReadStream(__dirname + '/public/liveagent_invite.png')/*{
         value: content.data,
         options: {
           filename: "attachment.jpg",
           contentType: content.type
         }
-      }
+      }*/
     }
   };
 
 //cosnole.log(content.data);
-var fs = require("fs");
+
   var req = request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
