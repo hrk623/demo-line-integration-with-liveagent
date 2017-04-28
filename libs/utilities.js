@@ -178,7 +178,6 @@ exports.getContent = function(line, message, callback) {
       handleError(error, body);
       return;
     }
-    console.log(base64_encode(body) );
     var content = {
       type: response.headers["content-type"],
       length: response.headers["content-length"],
@@ -187,15 +186,6 @@ exports.getContent = function(line, message, callback) {
     callback(content);
   });
 };
-
-
-function base64_encode(file) {
-  var fs = require('fs');
-    // read binary data
-    var bitmap = fs.readFileSync(file);
-    // convert binary data to base64 encoded string
-    return new Buffer(bitmap).toString('base64');
-}
 
 exports.parseQuery = function(str) {
   var query = {};

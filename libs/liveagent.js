@@ -365,7 +365,7 @@ function uploadFile(options, content) {
   };
 
 //cosnole.log(content.data);
-/*
+var fs = require("fs");
   var req = request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
@@ -373,13 +373,14 @@ function uploadFile(options, content) {
     }
     console.log('File Uploaded!');
   });
+  
   var form = req.form();
-  form.append('file', content.data, {
+  form.append('file', fs.createReadStream(../public/liveagent_invite.png), {
     filename: "attachment.jpg",
     contentType: content.type
   });
   
-*/
+
 }
 
 
