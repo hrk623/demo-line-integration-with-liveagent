@@ -185,12 +185,13 @@ exports.getContent = function(line, message, callback) {
       data: Buffer.concat(data)
     };
     var fs = require("fs");
-      fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
-      if(err) {
+    fs.writeFile('./public/tmp.jpeg', Buffer.concat(data), 'utf-8', (err) => {
+      if (err) {
         console.log(err);
         return;
       }
-    callback(content);      
+    });
+    callback(content);
   }).on('data', function(chunk) {
     data.push(chunk);
   });
