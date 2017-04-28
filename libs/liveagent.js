@@ -346,7 +346,6 @@ function uploadFile(options, content) {
   query += "&fileToken=" + session.file.fileToken;
   query += "&encoding=UTF-8";
 
-  console.log(session.file.uploadServletUrl + query);
   var options = {
     url: session.file.uploadServletUrl + query,
     headers: {
@@ -364,6 +363,9 @@ function uploadFile(options, content) {
       }
     }*/
   };
+
+cosnole.log(content.data);
+  
   var req = request.post(options, function(error, response, body) {
     if (error || response.statusCode != 200) {
       handleError(error, body);
@@ -371,13 +373,12 @@ function uploadFile(options, content) {
     }
     console.log('File Uploaded!');
   });
+  var form = req.form();
+  form.append('file', content.data, {
+    filename: "attachment.jpg",
+    contentType: content.type
+  });
   
- var form = req.form();
-form.append('file', content.data, {
-  filename: "attachment.jpg",
-  contentType: content.type
-});
-cosnole.log(content.data);
 
 }
 
