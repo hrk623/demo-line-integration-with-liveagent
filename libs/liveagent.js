@@ -149,7 +149,7 @@ function monitorChatActivity() {
   };
   request.get(options, function(error, response, body) {
     if (response.statusCode == 204) {
-      processMessage();
+      monitorChatActivity();
     } else if (response.statusCode == 200) {
       session.ack = body.sequence;
       util.setSession(session);  
