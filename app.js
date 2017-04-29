@@ -19,13 +19,9 @@ util.initSession();
 util.initLiveagentConnection();
 util.initLineConnection();
 
-
-console.log('url: '+process.env.HEROKU_APP_NAME);
-console.log('host: '+ process.env.HEROKU_PARENT_APP_NAME);
-
-
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
+	console.log(req.headers.host);
   lineController.processRequest(req);
   res.send('SUCCESS');
 });
