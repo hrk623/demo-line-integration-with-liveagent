@@ -17,8 +17,6 @@ addTranscript(text);
 };
 
 function addTranscript(text){
-
-
   delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
   transcripts.push(text);

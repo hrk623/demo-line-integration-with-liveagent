@@ -11,12 +11,6 @@ var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(bodyParser.urlencoded({ extended: true })); // JSONの送信を許可
 app.use(bodyParser.json()); // JSONのパースを楽に（受信時）
-app.use(function(req, res, next) {
-  if (/.*\.json/.test(req.path)) {
-    res.charset = "utf-8";
-  }
-  next();
-});
 app.use(express.static( path.join( __dirname, 'public' )));
 
 // responder の設定

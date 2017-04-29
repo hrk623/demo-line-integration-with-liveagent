@@ -129,6 +129,12 @@ function createChatVisitorSession() {
       options: {}
     });
     monitorChatActivity();
+
+
+    var transcripts = util.getTranscript();
+    var message = '[自動送信]\n';
+    message += transcripts.join('\n');
+    sendMessage(message);
   });
 }
 
