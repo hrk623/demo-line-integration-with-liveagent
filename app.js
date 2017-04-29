@@ -21,7 +21,7 @@ util.initLineConnection();
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
-	console.log(req.headers.host);
+  util.setEnv({baseUrl:'https://' + req.headers.host});
   lineController.processRequest(req);
   res.send('SUCCESS');
 });

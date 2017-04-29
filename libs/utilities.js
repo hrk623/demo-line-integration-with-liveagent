@@ -1,3 +1,19 @@
+
+
+exports.getEnv = function() {
+  delete require.cache[require.resolve("../public/env.json")];
+  return require("../public/env.json");
+};
+exports.setEnv = function(env) {
+  var fs = require("fs");
+  fs.writeFileSync(
+    "./public/env.json",
+    JSON.stringify(env),
+    "utf8"
+  );
+};
+
+
 // Responder の初期化、Setter、Getter
 exports.initResponder = function() {
   var fs = require("fs");
