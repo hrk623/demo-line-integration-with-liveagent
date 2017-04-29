@@ -18,6 +18,7 @@ util.initResponder();
 util.initSession();
 util.initLiveagentConnection();
 util.initLineConnection();
+util.initTranscript();
 
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {

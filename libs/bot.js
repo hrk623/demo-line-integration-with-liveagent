@@ -84,6 +84,8 @@ function onText(line, event) {
   var matchedPattern = patterns.filter(function(pattern) {
     return pattern.key.test(event.message.text);
   });
+
+  util.setTranscript('[' + line.user.name + '] ' + event.message.text);
   util.replyMessage(line, event, matchedPattern[0].messages);
 }
 
@@ -97,6 +99,7 @@ function onImage(line, event) {
       type: 'text',
       text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトです。'
     }];
+    util.setTranscript('[' + line.user.name + '] 画像を送信');
     util.replyMessage(line, event, messages);
   });
 }
@@ -110,6 +113,7 @@ function onVideo(line, event) {
       type: 'text',
       text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトです。'
     }];
+    util.setTranscript('[' + line.user.name + '] 動画を送信');
     util.replyMessage(line, event, messages);
   });
 }
@@ -123,6 +127,7 @@ function onAudio(line, event) {
       type: 'text',
       text: '種類は「' + content.type + '」、サイズは「' + content.length + '」バイトです。'
     }];
+    util.setTranscript('[' + line.user.name + '] 音声を送信');
     util.replyMessage(line, event, messages);
   });
 }
@@ -141,6 +146,7 @@ function onLocation(line, event) {
     latitude: 35.6800059,
     longitude: 139.7643227
   }];
+  util.setTranscript('[' + line.user.name + '] 位置情報('+event.message.address+')を送信');
   util.replyMessage(line, event, messages);
 }
 
@@ -149,6 +155,7 @@ function onSticker(line, event) {
     type: 'text',
     text: '良いスタンプですね！'
   }];
+  util.setTranscript('[' + line.user.name + '] スタンプを送信');
   util.replyMessage(line, event, messages);
 }
 

@@ -1,4 +1,35 @@
+// Responder の初期化、Setter、Getter
+exports.initTranscript = function() {
+  var fs = require("fs");
+  fs.writeFileSync(
+    "./public/transcript.json",
+    '[]'),
+    "utf8"
+  );
+};
+exports.getTranscript = function() {
+  delete require.cache[require.resolve("../public/transcript.json")];
+  return require("../public/transcript.json");
+};
+exports.setTranscript = function(text) {
+appendTranscript(text);
+};
 
+function appendTranscript(text){
+    delete require.cache[require.resolve("../public/transcript.json")];
+  var transcripts = require("../public/transcript.json");
+  transcripts.append(text);
+  if (transcripts.length > 5) {
+    transcripts.shift();
+  }
+
+  var fs = require("fs");
+  fs.writeFileSync(
+    "./public/transcript.json",
+    JSON.stringify(transcripts),
+    "utf8"
+  );
+}
 
 exports.getEnv = function() {
   delete require.cache[require.resolve("../public/env.json")];
@@ -126,6 +157,11 @@ exports.replyMessage = function(line, event, messageList) {
       handleError(error, body);
       return;
     }
+
+    messageList.forEach(function(message){
+      if (message.type === 'text')  appendTranscript('[BOT] ' + message.text);
+    });
+
   });
 };
 
