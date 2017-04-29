@@ -36,5 +36,11 @@
             "description": "Salesforce - Liveagent API のエンドポイント(ホストのみ)",
             "value": "Change This Value"
     },
+    "HEROKU_APP_NAME": {
+        "required": true
+    },
+    "HEROKU_PARENT_APP_NAME": {
+        "required": true
+    }
   },
 }
