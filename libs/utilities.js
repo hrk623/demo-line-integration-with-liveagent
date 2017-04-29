@@ -3,7 +3,7 @@ exports.initTranscript = function() {
   var fs = require("fs");
   fs.writeFileSync(
     "./public/transcript.json",
-    '[]',
+    '{messages:[]}',
     "utf8"
   );
 };
@@ -18,15 +18,15 @@ addTranscript(text);
 function addTranscript(text){
     delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
-  transcripts.push(text);
-  if (transcripts.length > 5) {
-    transcripts.shift();
+  transcripts.messages.push(text);
+  if (transcripts.messages.length > 5) {
+    transcripts.messages.shift();
   }
 
   var fs = require("fs");
   fs.writeFileSync(
     "./public/transcript.json",
-    transcripts,
+    JSON.stringify(transcripts),
     "utf8"
   );
 }
