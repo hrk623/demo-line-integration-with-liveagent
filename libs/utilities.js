@@ -16,6 +16,8 @@ addTranscript(text);
 };
 
 function addTranscript(text){
+console.log(text);
+
   delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
   transcripts.messages.push(text);
@@ -157,11 +159,9 @@ exports.replyMessage = function(line, event, messageList) {
       handleError(error, body);
       return;
     }
-/*
     messageList.forEach(function(message){
       if (message.type === 'text')  addTranscript('[BOT] ' + message.text);
     });
-*/
   });
 };
 
