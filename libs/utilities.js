@@ -26,7 +26,7 @@ function addTranscript(text){
   var fs = require("fs");
   fs.writeFileSync(
     "./public/transcript.json",
-    JSON.stringify(transcripts),
+    transcripts,
     "utf8"
   );
 }
