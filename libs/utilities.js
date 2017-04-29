@@ -12,13 +12,13 @@ exports.getTranscript = function() {
   return require("../public/transcript.json");
 };
 exports.setTranscript = function(text) {
-appendTranscript(text);
+addTranscript(text);
 };
 
-function appendTranscript(text){
+function addTranscript(text){
     delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
-  transcripts.append(text);
+  transcripts.push(text);
   if (transcripts.length > 5) {
     transcripts.shift();
   }
