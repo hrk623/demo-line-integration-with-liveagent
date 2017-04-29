@@ -16,7 +16,7 @@ addTranscript(text);
 };
 
 function addTranscript(text){
-console.log(text);
+
 
   delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
@@ -24,6 +24,8 @@ console.log(text);
   if (transcripts.messages.length > 5) {
     transcripts.messages.shift();
   }
+
+console.log(JSON.stringify(transcripts));
 
   var fs = require("fs");
   fs.writeFileSync(
