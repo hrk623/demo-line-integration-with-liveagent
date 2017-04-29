@@ -16,7 +16,7 @@ addTranscript(text);
 };
 
 function addTranscript(text){
-    delete require.cache[require.resolve("../public/transcript.json")];
+  delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
   transcripts.messages.push(text);
   if (transcripts.messages.length > 5) {
@@ -157,11 +157,11 @@ exports.replyMessage = function(line, event, messageList) {
       handleError(error, body);
       return;
     }
-
+/*
     messageList.forEach(function(message){
       if (message.type === 'text')  addTranscript('[BOT] ' + message.text);
     });
-
+*/
   });
 };
 
