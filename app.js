@@ -29,5 +29,5 @@ app.route('/line').post(function(req, res) {
 
 // サーバーを起動する
 app.listen(app.get('port'), function() {
-  console.log('Express server started on : http://' + (process.env.URL || 'localhost') + ':' + app.get('port'));
+  console.log('Express server started on port: ' + app.get('port'));
 });

@@ -159,7 +159,7 @@ exports.replyMessage = function(line, event, messageList) {
     }
 
     messageList.forEach(function(message){
-      if (message.type === 'text')  appendTranscript('[BOT] ' + message.text);
+      if (message.type === 'text')  addTranscript('[BOT] ' + message.text);
     });
 
   });
