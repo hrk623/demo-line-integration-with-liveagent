@@ -132,7 +132,7 @@ function createChatVisitorSession() {
 
 
     var transcripts = util.getTranscript();
-    var message = '[自動送信]\n';
+    var message = '--- 直前の会話 ---\n';
     message += transcripts.join('\n');
     sendMessage(message);
   });
