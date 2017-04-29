@@ -19,7 +19,7 @@ addTranscript(text);
 function addTranscript(text){
   delete require.cache[require.resolve("../public/transcript.json")];
   var transcripts = require("../public/transcript.json");
-  transcripts.push((new Date().toTimeString().substring(0,5)) + ' ' + text);
+  transcripts.push(text);
   if (transcripts.length > 10) {
     transcripts.shift();
   }
