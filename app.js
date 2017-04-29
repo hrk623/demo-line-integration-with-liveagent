@@ -20,6 +20,10 @@ util.initLiveagentConnection();
 util.initLineConnection();
 
 
+console.log('url: '+process.env.URL);
+console.log('host: '+ process.env.HOST);
+console.log(process.env);
+
 // Line からのリクエストを処理する。
 app.route('/line').post(function(req, res) {
   lineController.processRequest(req);
