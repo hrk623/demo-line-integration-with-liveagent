@@ -31,6 +31,7 @@ function addTranscript(text){
     JSON.stringify(transcripts),
     "utf8"
   );
+  console.log(transcripts);
 }
 
 exports.getEnv = function() {
