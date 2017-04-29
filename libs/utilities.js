@@ -1,9 +1,10 @@
 // Responder の初期化、Setter、Getter
 exports.initTranscript = function() {
   var fs = require("fs");
+
   fs.writeFileSync(
     "./public/transcript.json",
-    JSON.stringify('[]'),
+    JSON.stringify([]),
     "utf8"
   );
 };
