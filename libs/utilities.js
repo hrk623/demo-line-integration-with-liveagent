@@ -3,7 +3,7 @@ exports.initTranscript = function() {
   var fs = require("fs");
   fs.writeFileSync(
     "./public/transcript.json",
-    '[]'),
+    '[]',
     "utf8"
   );
 };
