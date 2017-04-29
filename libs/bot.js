@@ -85,7 +85,7 @@ function onText(line, event) {
     return pattern.key.test(event.message.text);
   });
 
-  util.setTranscript(event.message.text);
+  util.setTranscript(line.user.name + ': ' + event.message.text);
   util.replyMessage(line, event, matchedPattern[0].messages);
 }
 
