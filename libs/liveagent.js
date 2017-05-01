@@ -164,6 +164,7 @@ function monitorChatActivity() {
       body.messages.forEach(function(message) {
         processMessage(message);
       });
+      monitorChatActivity();
     } else {
       onMonitorChatActivityFailed(error, body);
       console.log(body);
