@@ -160,9 +160,9 @@ function monitorChatActivity() {
       session.ack = body.sequence;
       util.setSession(session);  
       body.messages.forEach(function(message) {
-        monitorChatActivity();
         processMessage(message);
       });
+      monitorChatActivity();
     } else {
       onMonitorChatActivityFailed(error, body);
       console.log(body);
