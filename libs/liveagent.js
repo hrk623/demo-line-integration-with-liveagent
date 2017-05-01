@@ -141,6 +141,7 @@ function createChatVisitorSession() {
 function monitorChatActivity() {
   var liveagent = util.getLiveagentConnection();
   var session = util.getSession();
+  if (!session.key) return;
   session.ack = session.ack === undefined ? -1 : session.ack;
   var request = require("request");
   var options = {
