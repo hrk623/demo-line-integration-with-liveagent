@@ -60,6 +60,24 @@ function onText(line, event) {
       type: 'text',
       text: '何かお困りですか？'
     }]
+  },{
+    key: /Hello|hello/,
+    messages: [{
+      type: 'text',
+      text: 'Hi ' + line.user.name + ','
+    }, {
+      type: 'text',
+      text: 'How can I help you today?'
+    }]
+  },{
+    key: /.*パスワード.*/,
+    messages: [{
+      type: 'text',
+      text: 'こちらの情報はお役にたちますか？'
+    }, {
+      type: 'text',
+      text: 'https://help.salesforce.com/articleView?id=user_password.htm&language=ja&type=0'
+    }]
   }, {
     key: /./,
     messages: [{
