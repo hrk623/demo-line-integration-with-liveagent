@@ -154,16 +154,15 @@ function monitorChatActivity() {
     json: true
   };
   request.get(options, function(error, response, body) {
+    var session = util.getSession();
+    session.ack = body.sequence;
+    util.setSession(session);
     if (response.statusCode === 204) {
       monitorChatActivity();
     } else if (response.statusCode === 200) {
-      var session = util.getSession();
-      session.ack = body.sequence;
-      util.setSession(session);  
       body.messages.forEach(function(message) {
         processMessage(message);
       });
-      monitorChatActivity();
     } else {
       onMonitorChatActivityFailed(error, body);
       console.log(body);
