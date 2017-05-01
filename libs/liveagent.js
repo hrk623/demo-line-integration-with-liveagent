@@ -157,6 +157,7 @@ function monitorChatActivity() {
     if (response.statusCode === 204) {
       monitorChatActivity();
     } else if (response.statusCode === 200) {
+      var session = util.getSession();
       session.ack = body.sequence;
       util.setSession(session);  
       body.messages.forEach(function(message) {
