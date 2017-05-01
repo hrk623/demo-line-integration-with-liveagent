@@ -472,6 +472,8 @@ function uploadFile(content) {
       type: "text",
       text: '[自動送信]ファイルが送信されました。'
     }]);
+  }).on('data', function(chunk) {
+    console.log("sending");
   });
 }
 
